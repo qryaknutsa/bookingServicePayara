@@ -12,6 +12,10 @@ public class EventDao {
     @PersistenceContext(unitName = "myPersistenceUnit")
     private EntityManager em;
 
+    public EntityManager getEm() {
+        return em;
+    }
+
     private Event safeFind(Long id)  {
         return em.find(Event.class, id);
     }

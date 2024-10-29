@@ -4,6 +4,7 @@ package com.example.bookingServicePayara.model;
 import com.example.bookingServicePayara.enums.Country;
 import com.example.bookingServicePayara.enums.EyeColor;
 import com.example.bookingServicePayara.enums.HairColor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,32 +13,38 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "person")
-@Getter
-@Setter
+//@Getter
+//@Setter
 public class Person implements Serializable {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     private int id;
 
     @Column(name = "height", nullable = false)
+    @JsonProperty("height")
     private int height;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "eyeColor")
+    @JsonProperty("eyeColor")
     private EyeColor eyeColor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "hairColor", nullable = false)
+    @JsonProperty("hairColor")
     private HairColor hairColor;
 
 
     @Enumerated(EnumType.STRING)
     @Column(name = "nationality")
+    @JsonProperty("nationality")
     private Country nationality;
 
-    @ManyToOne // more than one people per location
+    @ManyToOne(cascade = CascadeType.PERSIST) // more than one people per location
     @JoinColumn(name = "location", nullable = false)
+    @JsonProperty("location")
     private Location location;
 
     public Person() {
@@ -56,5 +63,54 @@ public class Person implements Serializable {
         this.eyeColor = eyeColor;
         this.hairColor = hairColor;
         this.nationality = nationality;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public EyeColor getEyeColor() {
+        return eyeColor;
+    }
+
+    public void setEyeColor(EyeColor eyeColor) {
+        this.eyeColor = eyeColor;
+    }
+
+    public HairColor getHairColor() {
+        return hairColor;
+    }
+
+    public void setHairColor(HairColor hairColor) {
+        this.hairColor = hairColor;
+    }
+
+    public Country getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(Country nationality) {
+        this.nationality = nationality;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+//@Data
 @Entity
 @Table(name = "event")
 public class Event implements Serializable {
@@ -23,18 +23,7 @@ public class Event implements Serializable {
     @Column(name = "description")
     private String description;
 
-//    @Column(name = "startTime", nullable = false)
-//    private ZonedDateTime startTime;
-//
-//    @Column(name = "endTime", nullable = false)
-//    private ZonedDateTime endTime;
-//
-//    @ManyToOne(cascade = CascadeType.PERSIST) // more than one events per location
-//    @JoinColumn(name = "location", nullable = false)
-//    private Location location;
-
-
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany
     @JoinTable(
             name = "event_ticket",  // Имя таблицы-соединителя
             joinColumns = @JoinColumn(name = "event_id"),  // Колонка для связи с Event
@@ -48,6 +37,38 @@ public class Event implements Serializable {
     public Event(String title, String description, List<Ticket> tickets) {
         this.title = title;
         this.description = description;
+        this.tickets = tickets;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
         this.tickets = tickets;
     }
 }

@@ -1,26 +1,30 @@
 package com.example.bookingServicePayara.controller;
 
 import com.example.bookingServicePayara.dao.EventDao;
+import com.example.bookingServicePayara.enums.TicketType;
+import com.example.bookingServicePayara.model.Coordinates;
 import com.example.bookingServicePayara.model.Event;
 import com.example.bookingServicePayara.model.Ticket;
 import jakarta.inject.Inject;
-import jakarta.json.*;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.io.StringReader;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Path("/events")
 //@ApplicationScoped
 public class EventController {
+
+    private String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepayara/TMA/api/v2/tickets";
+
     @Inject
     private EventDao rm;
 
@@ -33,7 +37,7 @@ public class EventController {
 
     @GET
     @Produces("application/json")
-    public Response getAllRoutes() {
+    public Response getAllEvents() {
         return Response.ok("{\"message\": \"qwe\"}").build(); // Возвращаем корректный JSON
     }
 
@@ -47,88 +51,64 @@ public class EventController {
 
     @POST
 //    @Consumes(MediaType.APPLICATION_JSON)
-    public Response addNewRoute() {
-        List<Ticket> tickets = getAllTickets();
-        Event event = new Event("qwe", "qweqweqwe", tickets);
-        rm.save(event);
-        return okWith(justOk);
-    }
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response addEvent() {
+        Ticket ticket = new Ticket();
+        ticket.setName("try6");
+        Coordinates coordinates = new Coordinates(10, 10f);
+        ticket.setCoordinates(coordinates);
+        ticket.setPrice(123123);
+        ticket.setDiscount(12.1);
+//        ticket.setType(TicketType.BUDGETARY);
 
+        Ticket savedTicket = saveTicket(ticket);
 
-    private List<Ticket> getAllTickets(){
-        Client client = ClientBuilder.newClient();
-        String springServiceUrl = "http://localhost:8080/ticketservicepayara/TMA/api/v2/tickets";
-        Response response = client.target(springServiceUrl)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get();
-
-        String responseBody = response.readEntity(String.class);
-        Json.createArrayBuilder().build();
-        JsonArray jsonArray;
-        try (JsonReader jsonReader = Json.createReader(new StringReader(responseBody))) {
-            jsonArray = jsonReader.readArray();
-        }
-
-        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JsonObject jsonObject = jsonArray.getJsonObject(i);
-            JsonValue creationDateValue = jsonObject.get("creationDate");
-            String creationDateString;
-            if (creationDateValue instanceof JsonNumber) {
-                creationDateString = ((JsonNumber) creationDateValue).toString();
-            } else {
-                throw new RuntimeException("Неправильный тип значения creationDate");
-            }
-            double epochSecondsDouble = Double.parseDouble(creationDateString);
-            long epochSeconds = (long) epochSecondsDouble; // Преобразуем в секунды
-            Instant instant = Instant.ofEpochSecond(epochSeconds);
-            ZonedDateTime creationDate = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
-
-            jsonObject = Json.createObjectBuilder(jsonObject)
-                    .add("creationDate", creationDate.toString())
-                    .build();
-            jsonArrayBuilder.add(jsonObject);
-        }
-        JsonArray newJsonArray = jsonArrayBuilder.build();
+        rm.getEm().merge(savedTicket);
 
         List<Ticket> tickets = new ArrayList<>();
-        for (int i = 0; i < newJsonArray.size(); i++) {
-            JsonObject jsonObject = newJsonArray.getJsonObject(i);
-            tickets.add(jsonObjectToTicket(jsonObject));
-        }
+        tickets.add(savedTicket); // Добавляем объект с ID
 
-        for(Ticket ticket : tickets){
-            System.out.println(ticket.getCreationDate());
-        }
-        client.close();
-        return tickets;
+        Event event = new Event();
+        event.setTitle("try7");
+        event.setDescription("description");
+        event.setTickets(tickets);
+        rm.save(event);
+        return Response.ok(event).build();
     }
 
-    private Ticket jsonObjectToTicket(JsonObject jsonObject) {
-        Ticket ticket = new Ticket();
-        ticket.setCreationDate(ZonedDateTime.parse(jsonObject.getString("creationDate")));
-        // установите остальные поля ticket
-        return ticket;
+
+    public Ticket saveTicket(Ticket ticket) {
+        try (Client client = ClientBuilder.newClient()) {
+            Response response = client.target(SPRING_SERVICE_URL)
+                    .request(MediaType.APPLICATION_JSON)
+                    .post(Entity.entity(ticket, MediaType.APPLICATION_JSON));
+
+            if (response.getStatus() == 201) {
+                return response.readEntity(Ticket.class); // Возвращаем обновленный билет с ID
+            } else {
+                throw new RuntimeException("Failed to save ticket on remote service.");
+            }
+        }
     }
 
-//    private List<Ticket> getAllTickets(){
-//        Client client = ClientBuilder.newClient();
-//        String springServiceUrl = "http://localhost:8080/ticketservicepayara/TMA/api/v2/tickets";
-//        Response response = client.target(springServiceUrl)
-//                .request(MediaType.APPLICATION_JSON_TYPE)
-//                .get();
-//
-//        List<Ticket> tickets = response.readEntity(new GenericType<List<Ticket>>() {});
-//
-//        for(Ticket ticket : tickets){
-//            System.out.println(ticket.getCreationDate());
-//        }
-//
-//
-////        long epochSeconds = (long) Double.parseDouble(creationDateString); // Преобразуем в секунды
-////        Instant instant = Instant.ofEpochSecond(epochSeconds);
-////        ZonedDateTime creationDate = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
-//        client.close();
-//        return tickets;
-//    }
+    private Ticket findTicket(int id) {
+        String s = SPRING_SERVICE_URL + id;
+        try (Client client = ClientBuilder.newClient()) {
+            Response response = client.target(s)
+                    .request(MediaType.APPLICATION_JSON)  // Меняем тип на XML
+                    .get();
+            return response.readEntity(Ticket.class);
+        }
+    }
+
+    private List<Ticket> getAllTickets() {
+        try (Client client = ClientBuilder.newClient()) {
+            return client.target(SPRING_SERVICE_URL)
+                    .request(MediaType.APPLICATION_JSON)  // Меняем тип на XML
+                    .get(new GenericType<List<Ticket>>() {
+                    });
+        }
+    }
+
 }

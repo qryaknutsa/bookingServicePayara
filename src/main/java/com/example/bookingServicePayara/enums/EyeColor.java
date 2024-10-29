@@ -1,10 +1,17 @@
 package com.example.bookingServicePayara.enums;
 
 
+//@JsonbEnum(EnumNamingStrategy.PROPERTY)
+
+import jakarta.json.bind.annotation.JsonbProperty;
+
 public enum EyeColor {
-    GREEN("green"),
-    RED("red"),
-    BLUE("blue");
+    @JsonbProperty("GREEN")
+    GREEN("GREEN"),
+    @JsonbProperty("RED")
+    RED("RED"),
+    @JsonbProperty("BLUE")
+    BLUE("BLUE");
 
     private final String value;
 
