@@ -54,17 +54,20 @@ public class EventController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response addEvent() {
+
+
+
         Ticket ticket = new Ticket();
         ticket.setName("try6");
-        Coordinates coordinates = new Coordinates(10, 10f);
+        Coordinates coordinates = new Coordinates(20, 20f);
         ticket.setCoordinates(coordinates);
         ticket.setPrice(123123);
-        ticket.setDiscount(12.1);
-//        ticket.setType(TicketType.BUDGETARY);
+        ticket.setDiscount(10);
 
         Ticket savedTicket = saveTicket(ticket);
 
         rm.getEm().merge(savedTicket);
+        rm.getEm().merge(savedTicket.getCoordinates());
 
         List<Ticket> tickets = new ArrayList<>();
         tickets.add(savedTicket); // Добавляем объект с ID
@@ -72,6 +75,8 @@ public class EventController {
         Event event = new Event();
         event.setTitle("try7");
         event.setDescription("description");
+        event.setCoordinates(coordinates);
+        event.setPrice(123123);
         event.setTickets(tickets);
         rm.save(event);
         return Response.ok(event).build();
@@ -87,7 +92,7 @@ public class EventController {
             if (response.getStatus() == 201) {
                 return response.readEntity(Ticket.class); // Возвращаем обновленный билет с ID
             } else {
-                throw new RuntimeException("Failed to save ticket on remote service.");
+                throw new RuntimeException(response.readEntity(String.class));
             }
         }
     }

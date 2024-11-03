@@ -17,12 +17,12 @@ import java.io.Serializable;
 //@Setter
 public class Person implements Serializable {
     @Id
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private int id;
 
-    @Column(name = "height", nullable = false)
+    @Column(nullable = false)
     @JsonProperty("height")
     private int height;
 
@@ -38,7 +38,7 @@ public class Person implements Serializable {
 
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "nationality")
+    @Column
     @JsonProperty("nationality")
     private Country nationality;
 

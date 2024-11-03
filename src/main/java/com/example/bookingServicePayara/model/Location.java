@@ -15,31 +15,31 @@ import java.io.Serializable;
 //@Setter
 public class Location implements Serializable {
     @Id
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private int id;
 
-    @Column(name = "x", nullable = false)
+    @Column(nullable = false)
     @JsonProperty("x")
-    private int x;
+    private Integer x;
 
-    @Column(name = "y")
+    @Column
     @JsonProperty("y")
-    private double y;
+    private long y;
 
-    @Column(name = "z", nullable = false)
+    @Column(nullable = false)
     @JsonProperty("z")
     private double z;
 
-    @Column(name = "name")
+    @Column
     @JsonProperty("name")
     private String name;
 
     public Location() {
     }
 
-    public Location(int x, double y, double z, String name) {
+    public Location(int x, long y, double z, String name) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -67,7 +67,7 @@ public class Location implements Serializable {
         return y;
     }
 
-    public void setY(double y) {
+    public void setY(long y) {
         this.y = y;
     }
 

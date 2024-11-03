@@ -3,12 +3,14 @@ package com.example.bookingServicePayara.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Data
+
 @Entity
 @Table(name = "event")
 public class Event implements Serializable {
@@ -22,6 +24,13 @@ public class Event implements Serializable {
 
     @Column(name = "description")
     private String description;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)  // more than one ticket to one pair of coordinates
+    @JoinColumn(name = "coordinates", nullable = false)
+    private Coordinates coordinates;
+
+    @Column(name = "price", nullable = false)
+    private int price;
 
     @OneToMany
     @JoinTable(
@@ -70,5 +79,21 @@ public class Event implements Serializable {
 
     public void setTickets(List<Ticket> tickets) {
         this.tickets = tickets;
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

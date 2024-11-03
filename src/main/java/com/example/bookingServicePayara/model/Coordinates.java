@@ -14,16 +14,16 @@ import java.io.Serializable;
 public class Coordinates implements Serializable {
 
     @Id
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private int id;
 
-    @Column(name = "x")
+    @Column
     @JsonProperty("x")
     private float x;
 
-    @Column(name = "y", nullable = false)
+    @Column(nullable = false)
     @JsonProperty("y")
     private Float y;
 

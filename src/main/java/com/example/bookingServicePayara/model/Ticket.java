@@ -18,12 +18,12 @@ import java.time.ZonedDateTime;
 @Table(name = "ticket")
 public class Ticket implements Serializable {
     @Id
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private int id;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     @JsonProperty("name")
     private String name;
 
@@ -40,25 +40,25 @@ public class Ticket implements Serializable {
     private ZonedDateTime creationDate = ZonedDateTime.now();
 
 
-    @Column(name = "price", nullable = false)
+    @Column(nullable = false)
     @JsonProperty("price")
     private int price;
 
-    @Column(name = "discount", nullable = false)
+    @Column(nullable = false)
     @JsonProperty("discount")
     private double discount;
 
-    @Column(name = "refundable")
+    @Column
     @JsonProperty("refundable")
     private Boolean refundable;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type")
+    @Column
     @JsonProperty("type")
     @JsonbTypeAdapter(TicketTypeAdapter.class)
     private TicketType type;
 
-    @ManyToOne(cascade = CascadeType.PERSIST) // more than one ticket to one person
+    @OneToOne(cascade = CascadeType.PERSIST) // more than one ticket to one person
     @JoinColumn(name = "person")
     @JsonProperty("person")
     private Person person;
