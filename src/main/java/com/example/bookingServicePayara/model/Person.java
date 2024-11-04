@@ -4,8 +4,12 @@ package com.example.bookingServicePayara.model;
 import com.example.bookingServicePayara.enums.Country;
 import com.example.bookingServicePayara.enums.EyeColor;
 import com.example.bookingServicePayara.enums.HairColor;
+import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,15 +26,18 @@ public class Person implements Serializable {
     @JsonProperty("id")
     private int id;
 
-    @Column(nullable = false)
-    @JsonProperty("height")
-    private int height;
+    @CustomNotNull
+    @Min(value = 50, message = "Значение должно быть больше 50")
+    @Max(value = 300, message = "Значение должно быть меньше 300")
+    @Column(nullable = false)    @JsonProperty("height")
+    private Integer height;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "eyeColor")
     @JsonProperty("eyeColor")
     private EyeColor eyeColor;
 
+    @CustomNotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "hairColor", nullable = false)
     @JsonProperty("hairColor")
@@ -42,6 +49,8 @@ public class Person implements Serializable {
     @JsonProperty("nationality")
     private Country nationality;
 
+    @CustomNotNull
+    @Valid
     @ManyToOne(cascade = CascadeType.PERSIST) // more than one people per location
     @JoinColumn(name = "location", nullable = false)
     @JsonProperty("location")

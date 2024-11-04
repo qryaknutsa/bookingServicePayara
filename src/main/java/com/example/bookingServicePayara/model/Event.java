@@ -1,12 +1,21 @@
 package com.example.bookingServicePayara.model;
 
 
+import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
+import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
+import com.example.bookingServicePayara.validation.annotation.ValidFraction;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,18 +28,34 @@ public class Event implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "startTime", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonProperty("startTime")
+    @Convert(converter = ZonedDateTimeConverter.class) // Применение конвертера
+    private ZonedDateTime startTime;
+
+    @Column(name = "endTime", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonProperty("endTime")
+    @Convert(converter = ZonedDateTimeConverter.class) // Применение конвертера
+    private ZonedDateTime endTime;
 
     @ManyToOne(cascade = CascadeType.PERSIST)  // more than one ticket to one pair of coordinates
     @JoinColumn(name = "coordinates", nullable = false)
     private Coordinates coordinates;
 
     @Column(name = "price", nullable = false)
-    private int price;
+    private Integer price;
+
+    @Column(nullable = false)
+    @JsonProperty("discount")
+    private Double discount;
 
     @OneToMany
     @JoinTable(
@@ -38,9 +63,44 @@ public class Event implements Serializable {
             joinColumns = @JoinColumn(name = "event_id"),  // Колонка для связи с Event
             inverseJoinColumns = @JoinColumn(name = "ticket_id")  // Колонка для связи с Ticket
     )
+
     private List<Ticket> tickets = new ArrayList<>();
 
     public Event() {
+    }
+
+    public Event(String title, String description, ZonedDateTime startTime, ZonedDateTime endTime, Coordinates coordinates, Integer price, Double discount) {
+        this.title = title;
+        this.description = description;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.coordinates = coordinates;
+        this.price = price;
+        this.discount = discount;
+    }
+
+    public ZonedDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(ZonedDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public ZonedDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(ZonedDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 
     public Event(String title, String description, List<Ticket> tickets) {
