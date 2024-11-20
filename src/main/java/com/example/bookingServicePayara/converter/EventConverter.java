@@ -1,29 +1,30 @@
-package com.example.bookingServicePayara.dto;
+package com.example.bookingServicePayara.converter;
 
+import com.example.bookingServicePayara.dto.EventWrite;
 import com.example.bookingServicePayara.model.Event;
 
-public class EventMapper {
+public class EventConverter {
 
-    public static Event toEvent(EventDto dto){
+    public static Event toEvent(EventWrite dto){
         return new Event(
                 dto.getTitle(),
                 dto.getDescription(),
                 dto.getStartTime(),
                 dto.getEndTime(),
-                dto.getCoordinates(),
+                CoordinatesConverter.toCoordinates(dto.getCoordinates()),
                 dto.getPrice(),
                 dto.getDiscount()
         );
     }
 
 
-    public static EventDto toEvent(Event dto){
-        return new EventDto(
+    public static EventWrite toEvent(Event dto){
+        return new EventWrite(
                 dto.getTitle(),
                 dto.getDescription(),
                 dto.getStartTime(),
                 dto.getEndTime(),
-                dto.getCoordinates(),
+                CoordinatesConverter.toCoordinatesWrite(dto.getCoordinates()),
                 dto.getPrice(),
                 dto.getDiscount()
         );

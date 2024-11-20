@@ -1,5 +1,6 @@
 package com.example.bookingServicePayara.exception.tools;
 
+import com.example.bookingServicePayara.exception.TicketDeletingException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -26,13 +27,24 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
                     .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
                     .collect(Collectors.toList());
 
-            ErrorResponseArray errorResponse = new ErrorResponseArray("Ошибка валидации", errors,"Validation Failed");
+            ErrorResponseArray errorResponse = new ErrorResponseArray("Ошибка валидации", errors, "Validation Failed");
 //            return Response.status(statusCode).entity(errorResponse).build();
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(errorResponse)
                     .type(MediaType.APPLICATION_JSON)
                     .build();
+        } else if (exception instanceof TicketDeletingException) {
+            String errorResponse = exception.getMessage();
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                    .entity(((TicketDeletingException) exception).getObj())
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         }
+
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(exception)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
 //        else if (exception instanceof SomeOtherException) {
 //            // Логика для других пользовательских исключений
 //            statusCode = Response.Status.NOT_FOUND.getStatusCode(); // Пример кода для других исключений
@@ -41,7 +53,12 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
 //        }
 
         // Общий ответ для всех других ошибок
-        CustomErrorResponse errorResponse = new CustomErrorResponse("Server Error: " + exception.getMessage(), exception.getCause().getLocalizedMessage(), "");
-        return Response.status(statusCode).entity(errorResponse).build();
+//        CustomErrorResponse errorResponse = new CustomErrorResponse("Server Error: " + exception.getCause().getCause().getObj(), exception.getClass().getName(), "");
+//        TicketDeletingException e = (TicketDeletingException) exception.getCause().getCause();
+////
+//        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                .entity(e.getObj())
+//                .type(MediaType.APPLICATION_JSON)
+//                .build();
     }
 }

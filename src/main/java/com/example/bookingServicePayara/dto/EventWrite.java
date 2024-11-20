@@ -13,7 +13,7 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class EventDto implements Serializable {
+public class EventWrite implements Serializable {
     @CustomNotNull
     @Size(min = 1, message = "Значение должно быть от 1 до 2147483647 символов")
     private String title;
@@ -34,7 +34,7 @@ public class EventDto implements Serializable {
 
     @CustomNotNull
     @Valid
-    private Coordinates coordinates;
+    private CoordinatesWrite coordinates;
 
     @CustomNotNull
     @Positive(message = "Значение должен быть больше нуля")
@@ -63,10 +63,10 @@ public class EventDto implements Serializable {
         this.title = title;
     }
 
-    public EventDto() {
+    public EventWrite() {
     }
 
-    public EventDto(String title, ZonedDateTime startTime, ZonedDateTime endTime, Coordinates coordinates, Integer price, Double discount, Integer ticketsNum) {
+    public EventWrite(String title, ZonedDateTime startTime, ZonedDateTime endTime, CoordinatesWrite coordinates, Integer price, Double discount, Integer ticketsNum) {
         this.title = title;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -76,7 +76,7 @@ public class EventDto implements Serializable {
         this.ticketsNum = ticketsNum;
     }
 
-    public EventDto(String title, String description, ZonedDateTime startTime, ZonedDateTime endTime, Coordinates coordinates, Integer price, Double discount) {
+    public EventWrite(String title, String description, ZonedDateTime startTime, ZonedDateTime endTime, CoordinatesWrite coordinates, Integer price, Double discount) {
         this.title = title;
         this.description = description;
         this.startTime = startTime;
@@ -111,11 +111,11 @@ public class EventDto implements Serializable {
         this.endTime = endTime;
     }
 
-    public @Valid Coordinates getCoordinates() {
+    public @Valid CoordinatesWrite getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(@Valid Coordinates coordinates) {
+    public void setCoordinates(@Valid CoordinatesWrite coordinates) {
         this.coordinates = coordinates;
     }
 

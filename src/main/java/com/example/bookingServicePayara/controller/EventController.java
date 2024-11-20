@@ -1,41 +1,21 @@
 package com.example.bookingServicePayara.controller;
 
 import com.example.bookingServicePayara.dao.EventDao;
-import com.example.bookingServicePayara.dto.EventDto;
-import com.example.bookingServicePayara.dto.EventMapper;
-import com.example.bookingServicePayara.enums.TicketType;
-import com.example.bookingServicePayara.exception.TicketSavingException;
-import com.example.bookingServicePayara.model.Coordinates;
+import com.example.bookingServicePayara.dto.EventWrite;
 import com.example.bookingServicePayara.model.Event;
-import com.example.bookingServicePayara.model.Ticket;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
-@Path("/events")
-//@ApplicationScoped
+@Path("events")
 public class EventController {
 
     @Inject
-    private EventDao rm;
+    private EventDao eventDao;
 
-    private final String justOk = "Ok";
-
-    // All Exceptions will be intercepted via ExceptionToStatus class
-    private Response okWith(Object entity) {
-        return Response.ok(entity).build();
-    }
 
     @GET
     @Produces("application/json")
@@ -48,19 +28,34 @@ public class EventController {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEvent(@PathParam("id") long id) {
-        return okWith(rm.getById(id));
+        return Response.ok(eventDao.getById(id)).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response addEvent(@Valid EventDto dto) {
-        Event event = rm.save(dto);
+    public Response addEvent(@Valid EventWrite dto) {
+        Object event = eventDao.save(dto);
         return Response.ok(event).build();
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    @Path("/sell/vip/{ticket_id}/{person_id}")
+    public Response copyTicketWithDoublePriceAndVip(@PathParam("ticket_id") int ticket_id,@PathParam("person_id") int person_id) {
+        Object e = eventDao.copyTicketWithDoublePriceAndVip(ticket_id, person_id);
+        return Response.ok(e).build();
+    }
 
-
+    @GET
+    @Path("/event/{event_id}/cancel")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response deleteEvent(@PathParam("event_id") int event_id) {
+        eventDao.delete(event_id);
+        return Response.status(204).build();
+    }
 
 }

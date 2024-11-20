@@ -33,4 +33,7 @@ public class CustomErrorResponse implements Serializable {
         this.detail = detail;
         this.instance = instance;
     }
+
+    public CustomErrorResponse() {
+    }
 }

@@ -74,7 +74,7 @@ public class Location implements Serializable {
         this.x = x;
     }
 
-    public double getY() {
+    public long getY() {
         return y;
     }
 

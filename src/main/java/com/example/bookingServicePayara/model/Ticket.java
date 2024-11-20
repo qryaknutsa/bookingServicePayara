@@ -35,7 +35,7 @@ public class Ticket implements Serializable {
 
     @CustomNotNull
     @Valid
-    @ManyToOne(cascade = CascadeType.PERSIST) // more than one ticket to one pair of coordinates
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "coordinates", nullable = false)
     @JsonProperty("coordinates")
     private Coordinates coordinates;
@@ -74,7 +74,7 @@ public class Ticket implements Serializable {
     private TicketType type;
 
     @Valid
-    @OneToOne(cascade = CascadeType.PERSIST) // more than one ticket to one person
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "person")
     @JsonProperty("person")
     private Person person;

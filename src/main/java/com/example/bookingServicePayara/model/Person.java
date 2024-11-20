@@ -51,7 +51,7 @@ public class Person implements Serializable {
 
     @CustomNotNull
     @Valid
-    @ManyToOne(cascade = CascadeType.PERSIST) // more than one people per location
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "location", nullable = false)
     @JsonProperty("location")
     private Location location;
