@@ -31,6 +31,14 @@ public class EventController {
         return Response.ok(eventDao.getById(id)).build();
     }
 
+    @GET
+    @Path("discounts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDiscounts() {
+        return Response.ok(eventDao.getDiscounts()).build();
+    }
+
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -54,8 +62,8 @@ public class EventController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response deleteEvent(@PathParam("event_id") int event_id) {
-        eventDao.delete(event_id);
-        return Response.status(204).build();
+        Object q = eventDao.delete(event_id);
+        return Response.ok(q).build();
     }
 
 }

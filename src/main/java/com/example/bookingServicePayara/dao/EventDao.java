@@ -23,6 +23,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Stateless
@@ -34,10 +35,26 @@ public class EventDao {
 
 
     //    @Transactional
-    public void delete(int event_id) {
+    public Object delete(int event_id) {
         Event event = em.find(Event.class, event_id);
         if (event != null) {
             em.remove(event);
+            List<Integer> ids = event.getTickets().stream().map(Ticket::getId).collect(Collectors.toList());
+            return deleteTickets(ids);
+        }
+        return null;
+    }
+
+
+    public Object getDiscounts(){
+        try (Client client = ClientBuilder.newClient()) {
+            Response response = client.target(SPRING_SERVICE_URL+"/discounts")
+                    .request(MediaType.APPLICATION_JSON)
+                    .get();
+
+            if (response.getStatus() == 200)
+                return response.readEntity(Double.class);
+            else return response.readEntity(String.class);
         }
     }
 
@@ -77,14 +94,8 @@ public class EventDao {
         Object object = saveTickets(ticket, dto.getTicketsNum());
         List<Ticket> tickets = new ArrayList<>();
         String str = "";
-        if(object instanceof String)str = (String) object;
+        if(object instanceof String) str = (String) object;
         else tickets = (List<Ticket>) object;
-
-
-//        List<Ticket> tickets = new ArrayList<>();
-//        for (int i = 0; i < dto.getTicketsNum(); i++) {
-//            tickets.add(ticket);
-//        }
 
         if(!str.isEmpty()) return str;
         Event event = EventConverter.toEvent(dto);
@@ -125,6 +136,22 @@ public class EventDao {
     }
 
 
+    public Object deleteTickets(List<Integer> ids) {
+        List<Ticket> tickets = new ArrayList<>();
+
+        try (Client client = ClientBuilder.newClient()) {
+            for(Integer id : ids) {
+                Response response = client.target(SPRING_SERVICE_URL+"/"+id)
+                        .request(MediaType.APPLICATION_JSON)
+                        .delete();
+
+                if (response.getStatus() != 204) return response.readEntity(String.class);
+            }
+        }
+        return tickets;
+    }
+
+
     private Ticket findTicket(int id) {
         String s = SPRING_SERVICE_URL + "/" + id;
         try (Client client = ClientBuilder.newClient()) {
@@ -135,13 +162,5 @@ public class EventDao {
         }
     }
 
-//    private List<Ticket> getAllTickets() {
-//        try (Client client = ClientBuilder.newClient()) {
-//            return client.target(SPRING_SERVICE_URL)
-//                    .request(MediaType.APPLICATION_JSON)  // Меняем тип на XML
-//                    .get(new GenericType<List<Ticket>>() {
-//                    });
-//        }
-//    }
 
 }
