@@ -1,64 +1,119 @@
 package com.example.bookingServicePayara.exception.tools;
 
-import com.example.bookingServicePayara.exception.TicketDeletingException;
-import jakarta.validation.ConstraintViolationException;
+import com.example.bookingServicePayara.cors.UriInfoFilter;
+import com.example.bookingServicePayara.exception.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Provider
 public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
+    private static final String UNPROCESSABLE_ENTITY = "Ошибка валидации данных";
+    private static final String BAD_REQUEST = "Некорректные данные";
+    private static final String INTERNAL_SERVER_ERROR = "Внутренняя ошибка сервера";
+    private static final String NOT_FOUND = "Объект не найден";
+    private static final String SERVICE_UNAVAILABLE = "Сервис временно не доступен";
+
 
     @Override
     public Response toResponse(Throwable exception) {
-        int statusCode = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(); // Код по умолчанию
 
-        if (exception instanceof ConstraintViolationException) {
-            statusCode = Response.Status.BAD_REQUEST.getStatusCode(); // Код для ошибок валидации
-            ConstraintViolationException validationEx = (ConstraintViolationException) exception;
-
-            // Преобразование ошибок валидации в понятный список
-            List<String> errors = validationEx.getConstraintViolations()
-                    .stream()
-                    .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                    .collect(Collectors.toList());
-
-            ErrorResponseArray errorResponse = new ErrorResponseArray("Ошибка валидации", errors, "Validation Failed");
-//            return Response.status(statusCode).entity(errorResponse).build();
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(errorResponse)
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } else if (exception instanceof TicketDeletingException) {
-            String errorResponse = exception.getMessage();
-            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
-                    .entity(((TicketDeletingException) exception).getObj())
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+        if (exception instanceof CustomNotFound) {
+            return eventNotFoundHandler(exception);
+        } else if (exception instanceof MultipleNotFound) {
+            return multipleNotFoundHandler(exception);
+        } else if (exception instanceof InvalidParameter) {
+            return invalidParameterHandler(exception);
+        } else if (exception instanceof TooLateToDelete) {
+            return tooLateToDeleteHandler(exception);
+        } else if (exception instanceof IncorrectParameter) {
+            return incorrectTypeHandler(exception);
+        } else if (exception instanceof TicketServiceNotAvailable) {
+            return ticketServiceNotAvailableHandler(exception);
+        } else {
+            return exceptionHandler(exception);
         }
 
-        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
-                .entity(exception)
+    }
+
+
+    public Response eventNotFoundHandler(Throwable exception){
+        CustomNotFound customNotFound = (CustomNotFound) exception;
+        CustomErrorResponse errorResponse = new CustomErrorResponse(NOT_FOUND, customNotFound.getMessage(), getFullURL());
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity(errorResponse)
                 .type(MediaType.APPLICATION_JSON)
                 .build();
-//        else if (exception instanceof SomeOtherException) {
-//            // Логика для других пользовательских исключений
-//            statusCode = Response.Status.NOT_FOUND.getStatusCode(); // Пример кода для других исключений
-//            ErrorResponse errorResponse = new ErrorResponse("Resource Not Found", List.of(exception.getMessage()));
-//            return Response.status(statusCode).entity(errorResponse).build();
-//        }
-
-        // Общий ответ для всех других ошибок
-//        CustomErrorResponse errorResponse = new CustomErrorResponse("Server Error: " + exception.getCause().getCause().getObj(), exception.getClass().getName(), "");
-//        TicketDeletingException e = (TicketDeletingException) exception.getCause().getCause();
-////
-//        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                .entity(e.getObj())
-//                .type(MediaType.APPLICATION_JSON)
-//                .build();
     }
+
+
+    public Response ticketServiceNotAvailableHandler(Throwable exception){
+        TicketServiceNotAvailable ticketServiceNotAvailable = (TicketServiceNotAvailable) exception;
+        CustomErrorResponse errorResponse = new CustomErrorResponse(SERVICE_UNAVAILABLE, ticketServiceNotAvailable.getMessage(), getFullURL());
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(errorResponse)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    public Response invalidParameterHandler(Throwable exception){
+        InvalidParameter invalidParameter = (InvalidParameter) exception;
+        ErrorResponseArray errorResponse = new ErrorResponseArray(UNPROCESSABLE_ENTITY, invalidParameter.getMessages(), getFullURL());
+        return Response.status(422)
+                .entity(errorResponse)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+
+    public Response tooLateToDeleteHandler(Throwable exception){
+        TooLateToDelete tooLateToDelete = (TooLateToDelete) exception;
+        CustomErrorResponse errorResponse = new CustomErrorResponse(UNPROCESSABLE_ENTITY, tooLateToDelete.getMessage(), getFullURL());
+        return Response.status(422)
+                .entity(errorResponse)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    public Response incorrectTypeHandler(Throwable exception){
+        IncorrectParameter incorrectParameter = (IncorrectParameter) exception;
+        ErrorResponseArray errorResponse = new ErrorResponseArray(BAD_REQUEST, incorrectParameter.getMessages(), getFullURL());
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity(errorResponse)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+    public Response multipleNotFoundHandler(Throwable exception){
+        MultipleNotFound multipleNotFound = (MultipleNotFound) exception;
+        ErrorResponseArray errorResponse = new ErrorResponseArray(BAD_REQUEST, multipleNotFound.getMessages(), getFullURL());
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity(errorResponse)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
+
+    public Response exceptionHandler(Throwable exception){
+        Exception exception1 = (Exception) exception;
+        CustomErrorResponse errorResponse = new CustomErrorResponse(INTERNAL_SERVER_ERROR, exception1.getLocalizedMessage(), getFullURL());
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(errorResponse)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+
+    }
+
+
+    public String getFullURL() {
+        UriInfo uriInfo = UriInfoFilter.getUriInfo(); // Получаем `UriInfo` из фильтра
+        if (uriInfo != null) {
+            return uriInfo.getRequestUri().toString(); // Полный URL запроса
+        }
+        return "Unknown URL";
+    }
+
 }

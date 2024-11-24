@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 
-//@Data
 @Entity
 @Table(name = "ticket")
 public class Ticket implements Serializable {
@@ -27,38 +26,26 @@ public class Ticket implements Serializable {
     @JsonProperty("id")
     private int id;
 
-    @CustomNotNull
-    @Size(min = 1, message = "Значение должно быть от 1 до 2147483647 символов")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition="TEXT")
     @JsonProperty("name")
     private String name;
 
-    @CustomNotNull
-    @Valid
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "coordinates", nullable = false)
     @JsonProperty("coordinates")
     private Coordinates coordinates;
 
 
-    @Column(name = "creationDate", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
     @JsonProperty("creationDate")
     @Convert(converter = ZonedDateTimeConverter.class) // Применение конвертера
     private ZonedDateTime creationDate = ZonedDateTime.now();
 
 
-    @CustomNotNull
-    @Positive(message = "Значение должен быть больше нуля")
-    @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647")
     @Column(nullable = false)
     @JsonProperty("price")
     private int price;
 
-    @CustomNotNull
-    @DecimalMin(value = "4.9E-324", message = "Значение не может быть меньше возможного 4.9E-324")
-    @DecimalMax(value = "1.7976931348623157E308", message = "Значение не может быть больше возможного 1.7976931348623157E308")
-    @ValidFraction(fraction = 3, message = "Значение должно иметь не более 3 знаков после запятой.")
     @Column(nullable = false)
     @JsonProperty("discount")
     private double discount;
@@ -73,7 +60,6 @@ public class Ticket implements Serializable {
     @JsonbTypeAdapter(TicketTypeAdapter.class)
     private TicketType type;
 
-    @Valid
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "person")
     @JsonProperty("person")

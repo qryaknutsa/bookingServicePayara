@@ -9,8 +9,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 public class CoordinatesWrite implements Serializable {
-    @DecimalMin(value = "-1.79769313348623157E308", message = "Значение не может быть меньше возможного 1.4E-45.")
-    @DecimalMax(value = "1.79769313348623157E308", message = "Значение не может быть больше возможного 3.4028235E38.")
+    @DecimalMin(value = "-1.79769313348623157E308", message = "Значение не может быть меньше возможного -1.79769313348623157E308.")
+    @DecimalMax(value = "1.79769313348623157E308", message = "Значение не может быть больше возможного 1.79769313348623157E308.")
     @ValidFraction(fraction = 3, message = "Значение должно иметь не более 3 знаков после запятой.")
     private float x = 0;
 

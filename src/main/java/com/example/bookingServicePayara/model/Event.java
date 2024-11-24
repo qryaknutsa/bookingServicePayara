@@ -28,7 +28,7 @@ public class Event implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, columnDefinition="TEXT")
     private String title;
 
     @Column(name = "description")
@@ -53,7 +53,7 @@ public class Event implements Serializable {
     @Column(name = "price", nullable = false)
     private Integer price;
 
-    @Column(nullable = false)
+    @Column(name = "discount",nullable = false)
     @JsonProperty("discount")
     private Double discount;
 

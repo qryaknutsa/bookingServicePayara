@@ -26,10 +26,8 @@ public class Person implements Serializable {
     @JsonProperty("id")
     private int id;
 
-    @CustomNotNull
-    @Min(value = 50, message = "Значение должно быть больше 50")
-    @Max(value = 300, message = "Значение должно быть меньше 300")
-    @Column(nullable = false)    @JsonProperty("height")
+    @Column(nullable = false)
+    @JsonProperty("height")
     private Integer height;
 
     @Enumerated(EnumType.STRING)
@@ -37,7 +35,6 @@ public class Person implements Serializable {
     @JsonProperty("eyeColor")
     private EyeColor eyeColor;
 
-    @CustomNotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "hairColor", nullable = false)
     @JsonProperty("hairColor")
@@ -49,8 +46,6 @@ public class Person implements Serializable {
     @JsonProperty("nationality")
     private Country nationality;
 
-    @CustomNotNull
-    @Valid
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "location", nullable = false)
     @JsonProperty("location")

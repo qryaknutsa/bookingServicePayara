@@ -23,13 +23,15 @@ public class EventWrite implements Serializable {
     @CustomNotNull
     @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
     @JsonProperty("startTime")
-    @Convert(converter = ZonedDateTimeConverter.class) // Применение конвертера
+    @Convert(converter = ZonedDateTimeConverter.class)
+    @FutureOrPresent(message = "Время начала не может быть в прошлом")
     private ZonedDateTime startTime;
 
     @CustomNotNull
     @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
     @JsonProperty("endTime")
-    @Convert(converter = ZonedDateTimeConverter.class) // Применение конвертера
+    @Convert(converter = ZonedDateTimeConverter.class)
+    @FutureOrPresent(message = "Время окончания не может быть в прошлом")
     private ZonedDateTime endTime;
 
     @CustomNotNull
@@ -42,8 +44,8 @@ public class EventWrite implements Serializable {
     private Integer price;
 
     @CustomNotNull
-    @DecimalMin(value = "4.9E-324", message = "Значение не может быть меньше возможного 4.9E-324")
-    @DecimalMax(value = "1.7976931348623157E308", message = "Значение не может быть больше возможного 1.7976931348623157E308")
+    @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0")
+    @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
     @ValidFraction(fraction = 3, message = "Значение должно иметь не более 3 знаков после запятой.")
     private Double discount;
 

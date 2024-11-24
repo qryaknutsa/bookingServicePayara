@@ -23,27 +23,19 @@ public class Location implements Serializable {
     @JsonProperty("id")
     private int id;
 
-    @CustomNotNull
-    @Min(value = -2147483648, message = "Значение не может быть меньше возможного -2147483648")
-    @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647")
-    @Column(nullable = false)    @JsonProperty("x")
+    @Column(nullable = false)
+    @JsonProperty("x")
     private Integer x;
 
-    @DecimalMin(value = "-9223372036854775808", message = "Значение не может быть меньше возможного -9223372036854775808")
-    @DecimalMax(value = "9223372036854775807", message = "Значение не может быть больше возможного 9223372036854775807")
     @Column
     @JsonProperty("y")
     private long y;
 
-    @CustomNotNull
-    @DecimalMin(value = "4.9E-324", message = "Значение не может быть меньше возможного 4.9E-324")
-    @DecimalMax(value = "1.7976931348623157E308", message = "Значение не может быть больше возможного 1.7976931348623157E308")
-    @ValidFraction(fraction = 6, message = "Значение должно иметь не более 6 знаков после запятой.")
-    @Column(nullable = false)    @JsonProperty("z")
+    @Column(nullable = false)
+    @JsonProperty("z")
     private Double z;
 
-    @Size(message = "Значение должно быть до 2147483647 символов")
-    @Column
+    @Column(columnDefinition="TEXT")
     @JsonProperty("name")
     private String name;
 
