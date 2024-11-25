@@ -20,7 +20,6 @@ public class CORSFilter implements Filter {
         httpResponse.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization");
         httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
 
-        // Обработка предварительных запросов
         if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
             httpResponse.setStatus(HttpServletResponse.SC_OK);
             return;

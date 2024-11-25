@@ -56,9 +56,9 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     }
 
     public String getFullURL() {
-        UriInfo uriInfo = UriInfoFilter.getUriInfo(); // Получаем `UriInfo` из фильтра
+        UriInfo uriInfo = UriInfoFilter.getUriInfo();
         if (uriInfo != null) {
-            return uriInfo.getRequestUri().toString(); // Полный URL запроса
+            return uriInfo.getRequestUri().toString();
         }
         return "Unknown URL";
     }

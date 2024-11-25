@@ -34,7 +34,7 @@ public class Ticket implements Serializable {
 
     @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
     @JsonProperty("creationDate")
-    @Convert(converter = ZonedDateTimeConverter.class) // Применение конвертера
+    @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime creationDate = ZonedDateTime.now();
 
 

@@ -7,12 +7,12 @@ public class TicketTypeAdapter implements JsonbAdapter<TicketType, String> {
     @Override
     public TicketType adaptFromJson(String value) {
         if (value == null) {
-            return null; // Возвращаем null для значений null
+            return null;
         }
         try {
             return TicketType.valueOf(value);
         } catch (IllegalArgumentException e) {
-            return null; // Возвращаем null для некорректных значений
+            return null;
         }
     }
 

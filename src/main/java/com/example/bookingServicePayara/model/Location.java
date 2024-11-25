@@ -9,8 +9,6 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "location")
-//@Getter
-//@Setter
 public class Location implements Serializable {
     @Id
     @Column(nullable = false, unique = true)

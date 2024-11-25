@@ -17,8 +17,6 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "person")
-//@Getter
-//@Setter
 public class Person implements Serializable {
     @Id
     @Column(nullable = false, unique = true)

@@ -10,6 +10,6 @@ public class UriInfoCleanupFilter implements ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-        UriInfoFilter.clear(); // Очищаем `ThreadLocal` после завершения запроса
+        UriInfoFilter.clear();
     }
 }
