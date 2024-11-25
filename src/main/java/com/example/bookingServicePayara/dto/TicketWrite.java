@@ -1,12 +1,8 @@
 package com.example.bookingServicePayara.dto;
 
 import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
-import com.example.bookingServicePayara.validation.annotation.ValidFraction;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -29,7 +25,6 @@ public class TicketWrite implements Serializable {
     @CustomNotNull
     @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0")
     @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
-    @ValidFraction(fraction = 3, message = "Значение должно иметь не более 3 знаков после запятой.")
     private Double discount;
 
     private Boolean refundable;

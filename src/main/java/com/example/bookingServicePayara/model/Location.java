@@ -1,12 +1,7 @@
 package com.example.bookingServicePayara.model;
 
-import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
-import com.example.bookingServicePayara.validation.annotation.ValidFraction;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 

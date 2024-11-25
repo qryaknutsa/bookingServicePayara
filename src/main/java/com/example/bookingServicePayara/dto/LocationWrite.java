@@ -1,9 +1,7 @@
 package com.example.bookingServicePayara.dto;
 
 import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
-import com.example.bookingServicePayara.validation.annotation.ValidFraction;
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
 import java.io.Serializable;
 
@@ -20,7 +18,6 @@ public class LocationWrite implements Serializable {
     @CustomNotNull
     @DecimalMin(value = "-1.79769313348623157E308", message = "Значение не может быть меньше возможного -1.79769313348623157E308")
     @DecimalMax(value = "1.79769313348623157E308", message = "Значение не может быть больше возможного 1.79769313348623157E308")
-    @ValidFraction(fraction = 6, message = "Значение должно иметь не более 6 знаков после запятой.")
     private Double z;
 
     @Size(message = "Значение должно быть до 2147483647 символов")

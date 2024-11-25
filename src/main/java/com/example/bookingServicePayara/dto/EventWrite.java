@@ -1,9 +1,7 @@
 package com.example.bookingServicePayara.dto;
 
-import com.example.bookingServicePayara.model.Coordinates;
 import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
 import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
-import com.example.bookingServicePayara.validation.annotation.ValidFraction;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
@@ -39,23 +37,28 @@ public class EventWrite implements Serializable {
     private CoordinatesWrite coordinates;
 
     @CustomNotNull
-    @Positive(message = "Значение должен быть больше нуля")
-    @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647")
+    @DecimalMax(value = "2147483647", message = "Значение не может быть больше возможного 2147483647")
+    @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 1")
     private Integer price;
 
     @CustomNotNull
     @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0")
     @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
-    @ValidFraction(fraction = 3, message = "Значение должно иметь не более 3 знаков после запятой.")
     private Double discount;
 
 
     @CustomNotNull
     @Positive(message = "Значение должен быть больше нуля")
-    @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647")
     @JsonProperty("ticketsNum")
     private Integer ticketsNum;
 
+    public @DecimalMax(value = "2147483647", message = "Значение не может быть больше возможного 2147483647") @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 1") Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(@DecimalMax(value = "2147483647", message = "Значение не может быть больше возможного 2147483647") @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 1") Integer price) {
+        this.price = price;
+    }
 
     public @Size(min = 1, message = "Значение должно быть от 1 до 2147483647 символов") String getTitle() {
         return title;
@@ -121,19 +124,12 @@ public class EventWrite implements Serializable {
         this.coordinates = coordinates;
     }
 
-    public @Positive(message = "Значение должен быть больше нуля") @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647") Integer getPrice() {
-        return price;
-    }
 
-    public void setPrice(@Positive(message = "Значение должен быть больше нуля") @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647") Integer price) {
-        this.price = price;
-    }
-
-    public @DecimalMin(value = "4.9E-324", message = "Значение не может быть меньше возможного 4.9E-324") @DecimalMax(value = "1.7976931348623157E308", message = "Значение не может быть больше возможного 1.7976931348623157E308") Double getDiscount() {
+    public @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0") @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100") Double getDiscount() {
         return discount;
     }
 
-    public void setDiscount(@DecimalMin(value = "4.9E-324", message = "Значение не может быть меньше возможного 4.9E-324") @DecimalMax(value = "1.7976931348623157E308", message = "Значение не может быть больше возможного 1.7976931348623157E308") Double discount) {
+    public void setDiscount(@DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0") @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100") Double discount) {
         this.discount = discount;
     }
 
@@ -144,4 +140,7 @@ public class EventWrite implements Serializable {
     public void setTicketsNum(@Positive(message = "Значение должен быть больше нуля") @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647") Integer ticketsNum) {
         this.ticketsNum = ticketsNum;
     }
+
+
+
 }

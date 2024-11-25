@@ -3,14 +3,10 @@ package com.example.bookingServicePayara.model;
 import com.example.bookingServicePayara.enums.TicketType;
 import com.example.bookingServicePayara.enums.tools.TicketTypeAdapter;
 import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
-import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
-import com.example.bookingServicePayara.validation.annotation.ValidFraction;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 
 
 import java.io.Serializable;

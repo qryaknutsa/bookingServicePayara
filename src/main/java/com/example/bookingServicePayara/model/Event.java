@@ -2,19 +2,11 @@ package com.example.bookingServicePayara.model;
 
 
 import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
-import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
-import com.example.bookingServicePayara.validation.annotation.ValidFraction;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
