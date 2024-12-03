@@ -15,7 +15,8 @@ public class Coordinates implements Serializable {
     @JsonProperty("id")
     private int id;
 
-    @Column    @JsonProperty("x")
+    @Column
+    @JsonProperty("x")
     private float x;
 
     @Column(nullable = false)

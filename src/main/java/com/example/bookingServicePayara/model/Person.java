@@ -20,7 +20,6 @@ import java.io.Serializable;
 public class Person implements Serializable {
     @Id
     @Column(nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private int id;
 
@@ -44,7 +43,7 @@ public class Person implements Serializable {
     @JsonProperty("nationality")
     private Country nationality;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "location", nullable = false)
     @JsonProperty("location")
     private Location location;

@@ -24,12 +24,13 @@ import jakarta.ws.rs.core.Response;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Stateless
 public class EventDao {
-//    private String SPRING_SERVICE_URL = "http://localhost:8090/ticketservicepayara/TMA/api/v2/tickets";
-private final String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepayara/TMA/api/v2/tickets";
+    //    private String SPRING_SERVICE_URL = "https://localhost:9001/ticketservicepayara/TMA/api/v2/tickets";
+    private final String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepayara/TMA/api/v2/tickets";
 
     @PersistenceContext(unitName = "myPersistenceUnit")
     private EntityManager em;
@@ -68,6 +69,36 @@ private final String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepa
     }
 
 
+    public Event save(EventWrite dto) {
+        Event event = EventConverter.toEvent(dto);
+        em.persist(event);
+        em.flush();
+
+        TicketWrite ticket = new TicketWrite();
+
+        ticket.setCoordinates(dto.getCoordinates());
+        ticket.setPrice(dto.getPrice());
+        ticket.setName(dto.getTitle());
+        ticket.setDiscount(dto.getDiscount());
+        ticket.setEventId(event.getId());
+
+        Object object = saveTickets(ticket, dto.getTicketsNum());
+        List<Integer> tickets = new ArrayList<>();
+        String str = "";
+        if (object instanceof String) str = (String) object;
+        else tickets = (List<Integer>) object;
+
+        if (!str.isEmpty()) {
+            em.remove(event);
+            throw new TicketServiceNotAvailable(str);
+        }else if(tickets.size() != dto.getTicketsNum()){
+            em.remove(event);
+            throw new TicketServiceNotAvailable("Не вышло сохранить такое количество билетов");
+        }
+        return event;
+    }
+
+
     public void delete(String eventIdStr) {
         int event_id;
         try {
@@ -83,13 +114,17 @@ private final String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepa
             throw new InvalidParameter(messages);
         }
 
+
         Event event = em.find(Event.class, event_id);
         if (event != null) {
             if (event.getStartTime().isBefore(ZonedDateTime.now()))
                 throw new TooLateToDelete("Мероприятие уже началось, отменить невозможно.");
             else if (ZonedDateTime.now().isAfter(event.getEndTime()))
                 throw new TooLateToDelete("Мероприятие уже прошло, отменить невозможно.");
-            else em.remove(event);
+            else {
+                deleteTickets(event_id);
+                em.remove(event);
+            }
         } else {
             throw new CustomNotFound("По вашему запросу мероприятие не найдено.");
         }
@@ -196,29 +231,6 @@ private final String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepa
     }
 
 
-    public Object save(EventWrite dto) {
-        TicketWrite ticket = new TicketWrite();
-
-        ticket.setCoordinates(dto.getCoordinates());
-        ticket.setPrice(dto.getPrice());
-        ticket.setName(dto.getTitle());
-        ticket.setDiscount(dto.getDiscount());
-
-
-        Object object = saveTickets(ticket, dto.getTicketsNum());
-        List<Ticket> tickets = new ArrayList<>();
-        String str = "";
-        if (object instanceof String) str = (String) object;
-        else tickets = (List<Ticket>) object;
-
-        if (!str.isEmpty()) return str;
-        Event event = EventConverter.toEvent(dto);
-        event.setTickets(tickets);
-        em.persist(event);
-        return event;
-    }
-
-
     public Object saveTicket(TicketWrite ticket) {
         try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(SPRING_SERVICE_URL)
@@ -231,36 +243,28 @@ private final String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepa
     }
 
     public Object saveTickets(TicketWrite ticket, int num) {
-        List<Ticket> tickets = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
 
         try (Client client = ClientBuilder.newClient()) {
-            for (int i = 0; i < num; i++) {
-                Response response = client.target(SPRING_SERVICE_URL)
-                        .request(MediaType.APPLICATION_JSON)
-                        .post(Entity.entity(ticket, MediaType.APPLICATION_JSON));
+            Response response = client.target(SPRING_SERVICE_URL + "/bulk/" + num)
+                    .request(MediaType.APPLICATION_JSON)
+                    .post(Entity.entity(ticket, MediaType.APPLICATION_JSON));
 
-                if (response.getStatus() == 201) tickets.add(response.readEntity(Ticket.class));
-                else throw new TicketServiceNotAvailable(response.readEntity(String.class));
-            }
+            if (response.getStatus() == 201) ids = (List<Integer>) response.readEntity(Object.class);
+            else throw new TicketServiceNotAvailable(response.readEntity(String.class));
+
         }
-        return tickets;
+        return ids;
     }
 
 
-    public Object deleteTickets(List<Integer> ids) {
-        List<Ticket> tickets = new ArrayList<>();
-
+    public void deleteTickets(int id) {
         try (Client client = ClientBuilder.newClient()) {
-            for (Integer id : ids) {
-                Response response = client.target(SPRING_SERVICE_URL + "/" + id)
-                        .request(MediaType.APPLICATION_JSON)
-                        .delete();
-
-                if (response.getStatus() != 204) return response.readEntity(String.class);
-                else throw new TicketServiceNotAvailable(response.readEntity(String.class));
-            }
+            Response response = client.target(SPRING_SERVICE_URL + "/bulk/" + id)
+                    .request(MediaType.APPLICATION_JSON)
+                    .delete();
+            if (response.getStatus() != 204) throw new TicketServiceNotAvailable(response.readEntity(String.class));
         }
-        return tickets;
     }
 
 

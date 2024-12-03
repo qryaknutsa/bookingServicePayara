@@ -52,7 +52,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
 
     public Response ticketServiceNotAvailableHandler(Throwable exception){
         TicketServiceNotAvailable ticketServiceNotAvailable = (TicketServiceNotAvailable) exception;
-        CustomErrorResponse errorResponse = new CustomErrorResponse(SERVICE_UNAVAILABLE, ticketServiceNotAvailable.getMessage(), getFullURL());
+        CustomErrorResponse errorResponse = new CustomErrorResponse(SERVICE_UNAVAILABLE, ticketServiceNotAvailable.toString(), getFullURL());
         return Response.status(Response.Status.SERVICE_UNAVAILABLE)
                 .entity(errorResponse)
                 .type(MediaType.APPLICATION_JSON)

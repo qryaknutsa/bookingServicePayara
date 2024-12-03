@@ -5,6 +5,7 @@ import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -27,13 +28,13 @@ public class Event implements Serializable {
     private String description;
 
     @Column(name = "startTime", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("startTime")
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime startTime;
 
     @Column(name = "endTime", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("endTime")
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime endTime;
@@ -42,6 +43,10 @@ public class Event implements Serializable {
     @JoinColumn(name = "coordinates", nullable = false)
     private Coordinates coordinates;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "location", nullable = false)
+    private Location location;
+
     @Column(name = "price", nullable = false)
     private Integer price;
 
@@ -49,14 +54,6 @@ public class Event implements Serializable {
     @JsonProperty("discount")
     private Double discount;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinTable(
-            name = "event_ticket",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "ticket_id")
-    )
-
-    private List<Ticket> tickets = new ArrayList<>();
 
     public Event() {
     }
@@ -68,6 +65,33 @@ public class Event implements Serializable {
         this.endTime = endTime;
         this.coordinates = coordinates;
         this.price = price;
+        this.discount = discount;
+    }
+
+    public Event(String title, String description, ZonedDateTime startTime, ZonedDateTime endTime, Coordinates coordinates, Location location, Integer price, Double discount) {
+        this.title = title;
+        this.description = description;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.coordinates = coordinates;
+        this.location = location;
+        this.price = price;
+        this.discount = discount;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public void setDiscount(Double discount) {
         this.discount = discount;
     }
 
@@ -95,10 +119,9 @@ public class Event implements Serializable {
         this.discount = discount;
     }
 
-    public Event(String title, String description, List<Ticket> tickets) {
+    public Event(String title, String description) {
         this.title = title;
         this.description = description;
-        this.tickets = tickets;
     }
 
     public int getId() {
@@ -125,13 +148,6 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public List<Ticket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
 
     public Coordinates getCoordinates() {
         return coordinates;

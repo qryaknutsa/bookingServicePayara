@@ -14,8 +14,8 @@ public class EventConverter {
         event.setStartTime(dto.getStartTime());
         event.setEndTime(dto.getEndTime());
         event.setCoordinates(CoordinatesConverter.toCoordinates(dto.getCoordinates()));
+        event.setLocation(LocationConverter.toLocation(dto.getLocation()));
         event.setDiscount(dto.getDiscount());
-
         return event;
     }
 
@@ -28,8 +28,8 @@ public class EventConverter {
         eventWrite.setStartTime(dto.getStartTime());
         eventWrite.setEndTime(dto.getEndTime());
         eventWrite.setCoordinates(CoordinatesConverter.toCoordinatesWrite(dto.getCoordinates()));
+        eventWrite.setLocation(LocationConverter.toLocationWrite(dto.getLocation()));
         eventWrite.setDiscount(dto.getDiscount());
-        eventWrite.setTicketsNum(dto.getTickets().size());
         return eventWrite;
     }
 
@@ -42,8 +42,8 @@ public class EventConverter {
         eventWrite.setStartTime(dto.getStartTime());
         eventWrite.setEndTime(dto.getEndTime());
         eventWrite.setCoordinates(CoordinatesConverter.toCoordinatesWrite(dto.getCoordinates()));
+        eventWrite.setLocation(LocationConverter.toLocationWrite(dto.getLocation()));
         eventWrite.setDiscount(dto.getDiscount());
-        eventWrite.setTicketsNum(dto.getTickets().size());
         return eventWrite;
     }
 }

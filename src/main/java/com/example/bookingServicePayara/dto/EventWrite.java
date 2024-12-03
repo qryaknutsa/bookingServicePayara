@@ -46,9 +46,13 @@ public class EventWrite implements Serializable {
     @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
     private Double discount;
 
+    @CustomNotNull
+    @Valid
+    private LocationWrite location;
 
     @CustomNotNull
     @Positive(message = "Значение должен быть больше нуля")
+//    @DecimalMax(value = "100", message = "Значение не может быть больше 100")
     @JsonProperty("ticketsNum")
     private Integer ticketsNum;
 
@@ -79,6 +83,16 @@ public class EventWrite implements Serializable {
         this.price = price;
         this.discount = discount;
         this.ticketsNum = ticketsNum;
+    }
+
+
+
+    public @Valid LocationWrite getLocation() {
+        return location;
+    }
+
+    public void setLocation(@Valid LocationWrite location) {
+        this.location = location;
     }
 
     public EventWrite(String title, String description, ZonedDateTime startTime, ZonedDateTime endTime, CoordinatesWrite coordinates, Integer price, Double discount) {

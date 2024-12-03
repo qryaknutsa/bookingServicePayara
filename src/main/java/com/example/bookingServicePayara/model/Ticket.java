@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 public class Ticket implements Serializable {
     @Id
     @Column(nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private int id;
 
@@ -26,16 +25,16 @@ public class Ticket implements Serializable {
     @JsonProperty("name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "coordinates", nullable = false)
     @JsonProperty("coordinates")
     private Coordinates coordinates;
 
 
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("creationDate")
     @Convert(converter = ZonedDateTimeConverter.class)
-    private ZonedDateTime creationDate = ZonedDateTime.now();
+    private ZonedDateTime creationDate;
 
 
     @Column(nullable = false)
@@ -56,30 +55,27 @@ public class Ticket implements Serializable {
     @JsonbTypeAdapter(TicketTypeAdapter.class)
     private TicketType type;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "person")
     @JsonProperty("person")
     private Person person;
 
+    @Column(name = "eventId")
+    private int eventId = 0;
+
+
     public Ticket() {
     }
 
-    public Ticket(String name, Coordinates coordinates, int price, double discount, Boolean refundable, TicketType type, Person person) {
-        this.name = name;
-        this.coordinates = coordinates;
-        this.price = price;
-        this.discount = discount;
-        this.refundable = refundable;
-        this.type = type;
-        this.person = person;
+
+    public int getEventId() {
+        return eventId;
     }
 
-    public Ticket(String name, Coordinates coordinates, int price, double discount) {
-        this.name = name;
-        this.coordinates = coordinates;
-        this.price = price;
-        this.discount = discount;
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
     }
+
     public int getId() {
         return id;
     }

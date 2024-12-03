@@ -1,9 +1,11 @@
 package com.example.bookingServicePayara.dto;
 
 import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
+import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.Convert;
+import jakarta.validation.Valid;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -25,6 +27,16 @@ public class EventRead implements Serializable {
     private ZonedDateTime endTime;
 
     private CoordinatesWrite coordinates;
+
+    public LocationWrite getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationWrite location) {
+        this.location = location;
+    }
+
+    private LocationWrite location;
 
     private Integer price;
 

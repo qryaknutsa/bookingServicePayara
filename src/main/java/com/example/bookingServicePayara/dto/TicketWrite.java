@@ -34,15 +34,13 @@ public class TicketWrite implements Serializable {
     @Valid
     private PersonWrite person;
 
+    @Min(value = 0, message = "Значение должно быть больше 0")
+    private Integer eventId;
+
 
     public TicketWrite() {}
 
-    public TicketWrite(CoordinatesWrite coordinates, String name, Integer price, Double discount){
-        this.coordinates = coordinates;
-        this.name = name;
-        this.price = price;
-        this.discount = discount;
-    }
+
 
     public @Size(min = 1, message = "Значение не должно быть пустым.") String getName() {
         return name;
@@ -98,5 +96,13 @@ public class TicketWrite implements Serializable {
 
     public void setPerson(@Valid PersonWrite person) {
         this.person = person;
+    }
+
+    public @Min(value = 0, message = "Значение должно быть больше 0") Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(@Min(value = 0, message = "Значение должно быть больше 0") Integer eventId) {
+        this.eventId = eventId;
     }
 }
