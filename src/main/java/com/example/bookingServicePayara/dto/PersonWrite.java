@@ -11,6 +11,8 @@ import java.io.Serializable;
 
 public class PersonWrite implements Serializable {
 
+    private Integer id;
+
     @CustomNotNull
     @Min(value = 50, message = "Значение должно быть больше 50")
     @Max(value = 300, message = "Значение должно быть меньше 300")
@@ -30,6 +32,14 @@ public class PersonWrite implements Serializable {
     @Valid
     private LocationWrite location;
 
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public @Min(value = 50, message = "Значение должно быть больше 50") @Max(value = 300, message = "Значение должно быть меньше 300") Integer getHeight() {
         return height;

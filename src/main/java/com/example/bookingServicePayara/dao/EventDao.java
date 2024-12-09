@@ -1,37 +1,24 @@
 package com.example.bookingServicePayara.dao;
 
-
-import com.example.bookingServicePayara.converter.CoordinatesConverter;
-import com.example.bookingServicePayara.converter.PersonConverter;
 import com.example.bookingServicePayara.dto.EventRead;
 import com.example.bookingServicePayara.dto.EventWrite;
 import com.example.bookingServicePayara.converter.EventConverter;
+import com.example.bookingServicePayara.dto.TicketWithEventWrite;
 import com.example.bookingServicePayara.dto.TicketWrite;
-import com.example.bookingServicePayara.enums.TicketType;
 import com.example.bookingServicePayara.exception.*;
 import com.example.bookingServicePayara.model.Event;
 import com.example.bookingServicePayara.model.Person;
-import com.example.bookingServicePayara.model.Ticket;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Stateless
 public class EventDao {
-    //    private String SPRING_SERVICE_URL = "https://localhost:9001/ticketservicepayara/TMA/api/v2/tickets";
-    private final String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepayara/TMA/api/v2/tickets";
-
     @PersistenceContext(unitName = "myPersistenceUnit")
     private EntityManager em;
 
@@ -42,6 +29,7 @@ public class EventDao {
 
         for (Event e : list) {
             EventRead eventRead = EventConverter.toEventRead(e);
+            eventRead.setTicketsNum(TicketDao.findTicketsByEventId(e.getId()));
             toReturn.add(eventRead);
         }
 
@@ -50,14 +38,7 @@ public class EventDao {
     }
 
     public EventRead getById(String idStr) {
-        int id;
-        try {
-            id = Integer.parseInt(idStr);
-        } catch (NumberFormatException e) {
-            List<String> messages = new ArrayList<>();
-            messages.add("Некорректное значение параметра ticket_id: " + idStr);
-            throw new IncorrectParameter(messages);
-        }
+        int id = validateId(idStr);
         Event e = em.find(Event.class, id);
         if (id < 0) {
             List<String> messages = new ArrayList<>();
@@ -74,7 +55,7 @@ public class EventDao {
         em.persist(event);
         em.flush();
 
-        TicketWrite ticket = new TicketWrite();
+        TicketWithEventWrite ticket = new TicketWithEventWrite();
 
         ticket.setCoordinates(dto.getCoordinates());
         ticket.setPrice(dto.getPrice());
@@ -82,7 +63,7 @@ public class EventDao {
         ticket.setDiscount(dto.getDiscount());
         ticket.setEventId(event.getId());
 
-        Object object = saveTickets(ticket, dto.getTicketsNum());
+        Object object = TicketDao.saveTickets(ticket, dto.getTicketsNum());
         List<Integer> tickets = new ArrayList<>();
         String str = "";
         if (object instanceof String) str = (String) object;
@@ -91,7 +72,7 @@ public class EventDao {
         if (!str.isEmpty()) {
             em.remove(event);
             throw new TicketServiceNotAvailable(str);
-        }else if(tickets.size() != dto.getTicketsNum()){
+        } else if (tickets.size() != dto.getTicketsNum()) {
             em.remove(event);
             throw new TicketServiceNotAvailable("Не вышло сохранить такое количество билетов");
         }
@@ -100,14 +81,7 @@ public class EventDao {
 
 
     public void delete(String eventIdStr) {
-        int event_id;
-        try {
-            event_id = Integer.parseInt(eventIdStr);
-        } catch (NumberFormatException e) {
-            List<String> messages = new ArrayList<>();
-            messages.add("Некорректное значение параметра ticket_id: " + eventIdStr);
-            throw new IncorrectParameter(messages);
-        }
+        int event_id = validateId(eventIdStr);
         if (event_id < 0) {
             List<String> messages = new ArrayList<>();
             messages.add("Значение event_id должно быть больше нуля");
@@ -122,7 +96,7 @@ public class EventDao {
             else if (ZonedDateTime.now().isAfter(event.getEndTime()))
                 throw new TooLateToDelete("Мероприятие уже прошло, отменить невозможно.");
             else {
-                deleteTickets(event_id);
+                TicketDao.deleteTickets(event_id);
                 em.remove(event);
             }
         } else {
@@ -130,18 +104,6 @@ public class EventDao {
         }
     }
 
-
-    public Object getDiscounts() {
-        try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(SPRING_SERVICE_URL + "/discounts")
-                    .request(MediaType.APPLICATION_JSON)
-                    .get();
-
-            if (response.getStatus() == 200)
-                return response.readEntity(Double.class);
-            else return response.readEntity(String.class);
-        }
-    }
 
     public Object copyTicketWithDoublePriceAndVip(String ticketIdStr, String personIdStr) {
         int ticketId = 0;
@@ -173,6 +135,8 @@ public class EventDao {
             messages.add("Некорректное значение параметра person_id: " + personIdStr);
             throw new IncorrectParameter(messages);
         }
+
+
         if (ticketId < 0) invalidTicketId = true;
         if (personId < 0) invalidPersonId = true;
         if (invalidTicketId && invalidPersonId) {
@@ -189,8 +153,9 @@ public class EventDao {
             throw new InvalidParameter(messages);
         }
 
-        Ticket foundTicket = findTicket(ticketId);
-        Person foundPerson = findPerson(personId);
+
+        TicketWithEventWrite foundTicket = TicketDao.findTicket(ticketId);
+        Person foundPerson = TicketDao.findPerson(personId);
 
         if (foundTicket == null) invalidTicketId = true;
         if (foundPerson == null) invalidPersonId = true;
@@ -214,16 +179,21 @@ public class EventDao {
         }
 
         if (foundTicket.getPerson().getId() == personId) {
+            if (foundTicket.getType() != null) {
+                if (foundTicket.getType().equals("VIP")) {
+                    throw new AlreadyVIPException();
+                }
+            }
             TicketWrite newTicket = new TicketWrite();
             if (foundTicket.getRefundable() != null) newTicket.setDiscount(foundTicket.getDiscount());
-            newTicket.setCoordinates(CoordinatesConverter.toCoordinatesWrite(foundTicket.getCoordinates()));
+            newTicket.setCoordinates(foundTicket.getCoordinates());
             newTicket.setName(foundTicket.getName());
             newTicket.setDiscount(foundTicket.getDiscount());
             newTicket.setPrice(foundTicket.getPrice() * 2);
-            newTicket.setType(TicketType.VIP.name());
-            newTicket.setPerson(PersonConverter.toPersonWrite(foundTicket.getPerson()));
+            newTicket.setType("VIP");
+            newTicket.setPerson(foundTicket.getPerson());
             if (foundTicket.getRefundable() != null) newTicket.setRefundable(foundTicket.getRefundable());
-            return saveTicket(newTicket);
+            return TicketDao.saveTicket(newTicket);
         } else {
             messages.add("У этого билета нет владельца с данным id.");
             throw new IncorrectParameter(messages);
@@ -231,66 +201,21 @@ public class EventDao {
     }
 
 
-    public Object saveTicket(TicketWrite ticket) {
-        try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(SPRING_SERVICE_URL)
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(ticket, MediaType.APPLICATION_JSON));
+    private void validatePairIds(String ticketIdStr, String personIdStr) {
 
-            if (response.getStatus() == 201) return response.readEntity(Ticket.class);
-            else throw new TicketServiceNotAvailable(response.readEntity(String.class));
-        }
-    }
-
-    public Object saveTickets(TicketWrite ticket, int num) {
-        List<Integer> ids = new ArrayList<>();
-
-        try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(SPRING_SERVICE_URL + "/bulk/" + num)
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(ticket, MediaType.APPLICATION_JSON));
-
-            if (response.getStatus() == 201) ids = (List<Integer>) response.readEntity(Object.class);
-            else throw new TicketServiceNotAvailable(response.readEntity(String.class));
-
-        }
-        return ids;
     }
 
 
-    public void deleteTickets(int id) {
-        try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(SPRING_SERVICE_URL + "/bulk/" + id)
-                    .request(MediaType.APPLICATION_JSON)
-                    .delete();
-            if (response.getStatus() != 204) throw new TicketServiceNotAvailable(response.readEntity(String.class));
+    private int validateId(String idStr) {
+        int id;
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            List<String> messages = new ArrayList<>();
+            messages.add("Некорректное значение параметра ticket_id: " + idStr);
+            throw new IncorrectParameter(messages);
         }
+        return id;
     }
-
-
-    private Ticket findTicket(int id) {
-        String s = SPRING_SERVICE_URL + "/" + id;
-        try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(s)
-                    .request(MediaType.APPLICATION_JSON)
-                    .get();
-            if (response.getStatus() == 200) return response.readEntity(Ticket.class);
-            else if (response.getStatus() == 404) return null;
-            else throw new TicketServiceNotAvailable(response.readEntity(String.class));
-        }
-    }
-
-    private Person findPerson(int id) {
-        String s = SPRING_SERVICE_URL + "/people/" + id;
-        try (Client client = ClientBuilder.newClient()) {
-            Response response = client.target(s)
-                    .request(MediaType.APPLICATION_JSON)
-                    .get();
-            if (response.getStatus() == 200) return response.readEntity(Person.class);
-            else if (response.getStatus() == 404) return null;
-            else throw new TicketServiceNotAvailable(response.readEntity(String.class));
-        }
-    }
-
 
 }

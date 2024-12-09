@@ -1,3 +1,3 @@
-create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property user=postgres:password=postgres:DatabaseName=soa:ServerName=localhost:PortNumber=5433 soa_pool
+create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property user=postgres:password=postgres:DatabaseName=soatwo:ServerName=localhost:PortNumber=5433 two_pool
 
-create-jdbc-resource --connectionpoolid soa_pool soa
+create-jdbc-resource --connectionpoolid two_pool two

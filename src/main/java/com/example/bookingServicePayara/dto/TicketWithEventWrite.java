@@ -6,8 +6,7 @@ import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 
-
-public class TicketWrite implements Serializable {
+public class TicketWithEventWrite implements Serializable {
     @CustomNotNull
     @Size(min = 1, message = "Значение не должно быть пустым.")
     private String name;
@@ -34,7 +33,11 @@ public class TicketWrite implements Serializable {
     @Valid
     private PersonWrite person;
 
-    public TicketWrite() {}
+    @Min(value = 0, message = "Значение должно быть больше 0")
+    private Integer eventId;
+
+
+    public TicketWithEventWrite() {}
 
 
 
@@ -92,5 +95,13 @@ public class TicketWrite implements Serializable {
 
     public void setPerson(@Valid PersonWrite person) {
         this.person = person;
+    }
+
+    public @Min(value = 0, message = "Значение должно быть больше 0") Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(@Min(value = 0, message = "Значение должно быть больше 0") Integer eventId) {
+        this.eventId = eventId;
     }
 }

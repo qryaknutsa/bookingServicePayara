@@ -22,6 +22,7 @@ public class PersonConverter {
 
     public static PersonWrite toPersonWrite(Person person){
         PersonWrite personWrite = new PersonWrite();
+        personWrite.setId(person.getId());
         if(person.getEyeColor() != null) personWrite.setEyeColor(person.getEyeColor().name());
         personWrite.setHeight(person.getHeight());
         if(person.getNationality() != null) personWrite.setNationality(person.getNationality().name());

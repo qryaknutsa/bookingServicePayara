@@ -33,6 +33,8 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             return incorrectTypeHandler(exception);
         } else if (exception instanceof TicketServiceNotAvailable) {
             return ticketServiceNotAvailableHandler(exception);
+        }else if(exception instanceof AlreadyVIPException){
+            return alreadyVipHandler(exception);
         } else {
             return exceptionHandler(exception);
         }
@@ -78,6 +80,15 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
                 .build();
     }
 
+    public Response alreadyVipHandler(Throwable exception){
+        TooLateToDelete tooLateToDelete = (TooLateToDelete) exception;
+        CustomErrorResponse errorResponse = new CustomErrorResponse(UNPROCESSABLE_ENTITY, tooLateToDelete.getMessage(), getFullURL());
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity(errorResponse)
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+    }
+
     public Response incorrectTypeHandler(Throwable exception){
         IncorrectParameter incorrectParameter = (IncorrectParameter) exception;
         ErrorResponseArray errorResponse = new ErrorResponseArray(BAD_REQUEST, incorrectParameter.getMessages(), getFullURL());
@@ -99,7 +110,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
 
     public Response exceptionHandler(Throwable exception){
         Exception exception1 = (Exception) exception;
-        CustomErrorResponse errorResponse = new CustomErrorResponse(INTERNAL_SERVER_ERROR, exception1.getLocalizedMessage(), getFullURL());
+        CustomErrorResponse errorResponse = new CustomErrorResponse(INTERNAL_SERVER_ERROR, exception1.getCause().getLocalizedMessage(), getFullURL());
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(errorResponse)
                 .type(MediaType.APPLICATION_JSON)
