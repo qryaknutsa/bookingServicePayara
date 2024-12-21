@@ -16,12 +16,12 @@ public class EventRead implements Serializable {
 
     private String description;
 
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("startTime")
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime startTime;
 
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("endTime")
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime endTime;

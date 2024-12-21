@@ -19,16 +19,14 @@ public class EventWrite implements Serializable {
     private String description;
 
     @CustomNotNull
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("startTime")
-    @Convert(converter = ZonedDateTimeConverter.class)
     @FutureOrPresent(message = "Время начала не может быть в прошлом")
     private ZonedDateTime startTime;
 
     @CustomNotNull
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSX")
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("endTime")
-    @Convert(converter = ZonedDateTimeConverter.class)
     @FutureOrPresent(message = "Время окончания не может быть в прошлом")
     private ZonedDateTime endTime;
 

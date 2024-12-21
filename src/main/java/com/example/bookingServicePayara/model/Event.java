@@ -27,16 +27,14 @@ public class Event implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "startTime", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+    @Column(name = "startTime", nullable = false, columnDefinition = "TIMESTAMP(0) WITH TIME ZONE")
+    @JsonbDateFormat(value = "yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("startTime")
-    @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime startTime;
 
-    @Column(name = "endTime", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+    @Column(name = "endTime", nullable = false, columnDefinition = "TIMESTAMP(0) WITH TIME ZONE")
+    @JsonbDateFormat(value = "yyyy-MM-dd'T'HH:mm:ssXXX")
     @JsonProperty("endTime")
-    @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime endTime;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

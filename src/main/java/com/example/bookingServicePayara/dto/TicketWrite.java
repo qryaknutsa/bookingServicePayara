@@ -23,11 +23,11 @@ public class TicketWrite implements Serializable {
     private Integer price;
 
     @CustomNotNull
-    @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0")
+    @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 0")
     @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
     private Double discount;
 
-    private Boolean refundable;
+    private Boolean refundable = false;
 
     private String type;
 

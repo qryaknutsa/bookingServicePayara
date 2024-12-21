@@ -25,7 +25,7 @@ public class Person implements Serializable {
 
     @Column(nullable = false)
     @JsonProperty("height")
-    private Integer height;
+    private int height;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "eyeColor")

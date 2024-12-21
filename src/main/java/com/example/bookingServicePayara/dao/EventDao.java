@@ -88,7 +88,6 @@ public class EventDao {
             throw new InvalidParameter(messages);
         }
 
-
         Event event = em.find(Event.class, event_id);
         if (event != null) {
             if (event.getStartTime().isBefore(ZonedDateTime.now()))
@@ -193,6 +192,7 @@ public class EventDao {
             newTicket.setType("VIP");
             newTicket.setPerson(foundTicket.getPerson());
             if (foundTicket.getRefundable() != null) newTicket.setRefundable(foundTicket.getRefundable());
+            else newTicket.setRefundable(false);
             return TicketDao.saveTicket(newTicket);
         } else {
             messages.add("У этого билета нет владельца с данным id.");
@@ -200,10 +200,6 @@ public class EventDao {
         }
     }
 
-
-    private void validatePairIds(String ticketIdStr, String personIdStr) {
-
-    }
 
 
     private int validateId(String idStr) {

@@ -19,7 +19,7 @@ public class Ticket implements Serializable {
     @Id
     @Column(nullable = false, unique = true)
     @JsonProperty("id")
-    private int id;
+    private Long id;
 
     @Column(nullable = false, columnDefinition="TEXT")
     @JsonProperty("name")
@@ -47,7 +47,7 @@ public class Ticket implements Serializable {
 
     @Column
     @JsonProperty("refundable")
-    private Boolean refundable;
+    private boolean refundable = false;
 
     @Enumerated(EnumType.STRING)
     @Column
@@ -76,12 +76,20 @@ public class Ticket implements Serializable {
         this.eventId = eventId;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isRefundable() {
+        return refundable;
+    }
+
+    public void setRefundable(boolean refundable) {
+        this.refundable = refundable;
     }
 
     public String getName() {
@@ -122,14 +130,6 @@ public class Ticket implements Serializable {
 
     public void setDiscount(double discount) {
         this.discount = discount;
-    }
-
-    public Boolean getRefundable() {
-        return refundable;
-    }
-
-    public void setRefundable(Boolean refundable) {
-        this.refundable = refundable;
     }
 
     public TicketType getType() {
