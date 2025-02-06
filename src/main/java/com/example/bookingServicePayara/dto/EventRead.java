@@ -1,11 +1,9 @@
 package com.example.bookingServicePayara.dto;
 
 import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
-import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.Convert;
-import jakarta.validation.Valid;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -16,25 +14,18 @@ public class EventRead implements Serializable {
 
     private String description;
 
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     @JsonProperty("startTime")
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime startTime;
 
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     @JsonProperty("endTime")
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime endTime;
 
     private CoordinatesWrite coordinates;
 
-    public LocationWrite getLocation() {
-        return location;
-    }
-
-    public void setLocation(LocationWrite location) {
-        this.location = location;
-    }
 
     private LocationWrite location;
 
@@ -58,7 +49,16 @@ public class EventRead implements Serializable {
         this.ticketsNum = ticketsNum;
     }
 
-    public EventRead(){}
+    public EventRead() {
+    }
+
+    public LocationWrite getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationWrite location) {
+        this.location = location;
+    }
 
     public int getId() {
         return id;

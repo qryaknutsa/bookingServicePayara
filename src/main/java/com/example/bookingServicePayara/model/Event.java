@@ -1,11 +1,6 @@
 package com.example.bookingServicePayara.model;
 
-
-import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
+import com.google.gson.annotations.SerializedName;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
 
@@ -29,12 +24,12 @@ public class Event implements Serializable {
 
     @Column(name = "startTime", nullable = false, columnDefinition = "TIMESTAMP(0) WITH TIME ZONE")
     @JsonbDateFormat(value = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    @JsonProperty("startTime")
+    @SerializedName("startTime")
     private ZonedDateTime startTime;
 
     @Column(name = "endTime", nullable = false, columnDefinition = "TIMESTAMP(0) WITH TIME ZONE")
     @JsonbDateFormat(value = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    @JsonProperty("endTime")
+    @SerializedName("endTime")
     private ZonedDateTime endTime;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -49,7 +44,7 @@ public class Event implements Serializable {
     private Integer price;
 
     @Column(name = "discount",nullable = false)
-    @JsonProperty("discount")
+    @SerializedName("discount")
     private Double discount;
 
 

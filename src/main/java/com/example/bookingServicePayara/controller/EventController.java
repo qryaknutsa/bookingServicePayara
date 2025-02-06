@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 @Path("")
 public class EventController {
 
+
     @Inject
     private EventDao eventDao;
 
