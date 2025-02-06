@@ -93,6 +93,6 @@
 
     </dependencies>
     <build>
-        <finalName>bookingServicePayara</finalName>
+        <finalName>bookingservicepayara</finalName>
     </build>
 </project>
