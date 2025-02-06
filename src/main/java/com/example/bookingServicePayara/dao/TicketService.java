@@ -13,7 +13,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
-public class TicketDao {
+public class TicketService {
 //    private final static String SPRING_SERVICE_URL = "https://localhost:9011/ticketservicepayara/TMA/api/v2/tickets";
     private final static String SPRING_SERVICE_URL = "http://localhost:8080/ticketservicepayara/TMA/api/v2/tickets";
 

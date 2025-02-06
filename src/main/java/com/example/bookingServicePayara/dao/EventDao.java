@@ -1,14 +1,13 @@
 package com.example.bookingServicePayara.dao;
 
+import com.example.bookingServicePayara.converter.EventConverter;
 import com.example.bookingServicePayara.dto.EventRead;
 import com.example.bookingServicePayara.dto.EventWrite;
-import com.example.bookingServicePayara.converter.EventConverter;
 import com.example.bookingServicePayara.dto.TicketWithEventWrite;
 import com.example.bookingServicePayara.dto.TicketWrite;
 import com.example.bookingServicePayara.exception.*;
 import com.example.bookingServicePayara.model.Event;
 import com.example.bookingServicePayara.model.Person;
-import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -16,12 +15,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Stateless
 public class EventDao {
     @PersistenceContext(unitName = "myPersistenceUnit")
     private EntityManager em;
-
 
     public List<EventRead> getAll() {
         List<Event> list = em.createQuery("SELECT l FROM Event l", Event.class).getResultList();
@@ -29,7 +25,7 @@ public class EventDao {
 
         for (Event e : list) {
             EventRead eventRead = EventConverter.toEventRead(e);
-            eventRead.setTicketsNum(TicketDao.findTicketsByEventId(e.getId()));
+            eventRead.setTicketsNum(TicketService.findTicketsByEventId(e.getId()));
             toReturn.add(eventRead);
         }
 
@@ -49,7 +45,6 @@ public class EventDao {
         return EventConverter.toEventRead(e);
     }
 
-
     public Event save(EventWrite dto) {
         Event event = EventConverter.toEvent(dto);
         em.persist(event);
@@ -63,7 +58,7 @@ public class EventDao {
         ticket.setDiscount(dto.getDiscount());
         ticket.setEventId(event.getId());
 
-        Object object = TicketDao.saveTickets(ticket, dto.getTicketsNum());
+        Object object = TicketService.saveTickets(ticket, dto.getTicketsNum());
         List<Integer> tickets = new ArrayList<>();
         String str = "";
         if (object instanceof String) str = (String) object;
@@ -78,7 +73,6 @@ public class EventDao {
         }
         return event;
     }
-
 
     public void delete(String eventIdStr) {
         int event_id = validateId(eventIdStr);
@@ -95,14 +89,13 @@ public class EventDao {
             else if (ZonedDateTime.now().isAfter(event.getEndTime()))
                 throw new TooLateToDelete("Мероприятие уже прошло, отменить невозможно.");
             else {
-                TicketDao.deleteTickets(event_id);
+                TicketService.deleteTickets(event_id);
                 em.remove(event);
             }
         } else {
             throw new CustomNotFound("По вашему запросу мероприятие не найдено.");
         }
     }
-
 
     public Object copyTicketWithDoublePriceAndVip(String ticketIdStr, String personIdStr) {
         int ticketId = 0;
@@ -153,8 +146,8 @@ public class EventDao {
         }
 
 
-        TicketWithEventWrite foundTicket = TicketDao.findTicket(ticketId);
-        Person foundPerson = TicketDao.findPerson(personId);
+        TicketWithEventWrite foundTicket = TicketService.findTicket(ticketId);
+        Person foundPerson = TicketService.findPerson(personId);
 
         if (foundTicket == null) invalidTicketId = true;
         if (foundPerson == null) invalidPersonId = true;
@@ -193,13 +186,12 @@ public class EventDao {
             newTicket.setPerson(foundTicket.getPerson());
             if (foundTicket.getRefundable() != null) newTicket.setRefundable(foundTicket.getRefundable());
             else newTicket.setRefundable(false);
-            return TicketDao.saveTicket(newTicket);
+            return TicketService.saveTicket(newTicket);
         } else {
             messages.add("У этого билета нет владельца с данным id.");
             throw new IncorrectParameter(messages);
         }
     }
-
 
 
     private int validateId(String idStr) {
@@ -213,5 +205,6 @@ public class EventDao {
         }
         return id;
     }
+
 
 }
