@@ -1,15 +1,15 @@
 package com.example.bookingServicePayara.controller;
 
+import com.example.bookingServicePayara.dto.EventReadList;
 import com.example.bookingServicePayara.dto.EventRead;
 import com.example.bookingServicePayara.dto.EventWrite;
+import com.example.bookingServicePayara.exception.*;
 import com.example.bookingServicePayara.model.Event;
+import com.example.bookingServicePayara.model.Ticket;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.validation.Valid;
-import jakarta.xml.soap.SOAPException;
-
-import java.util.List;
 
 
 @WebService
@@ -19,21 +19,21 @@ public interface EventService {
     String getQwe();
 
     @WebMethod
-    Object getAllEvents() throws SOAPException;
+    EventReadList getAllEvents() throws CustomNotFound;
 
     @WebMethod
-    EventRead getEvent(@WebParam(name = "id") String id) throws SOAPException;
+    EventRead getEvent(@WebParam(name = "id") String id) throws CustomNotFound, InvalidParameter;
 
     @WebMethod
-    Object addEvent(@Valid @WebParam(name = "eventWrite") EventWrite dto) throws SOAPException;
+    Event addEvent(@Valid @WebParam(name = "eventWrite") EventWrite dto) throws TicketServiceNotAvailable;
 
     @WebMethod
-    Object copyTicketWithDoublePriceAndVip(
+    Ticket copyTicketWithDoublePriceAndVip(
             @WebParam(name = "ticket_id") String ticketId,
             @WebParam(name = "person_id") String personId
-    ) throws SOAPException;
+    ) throws IncorrectParameter, InvalidParameter, MultipleNotFound, AlreadyVIPException,  TicketServiceNotAvailable;
 
     @WebMethod
-    Object deleteEvent(@WebParam(name = "event_id") String event_id) throws SOAPException;
+    void deleteEvent(@WebParam(name = "event_id") String event_id) throws InvalidParameter, TooLateToDelete, CustomNotFound;
 
 }
