@@ -62,7 +62,8 @@ public class TicketService {
                     .get();
             if (response.getStatus() == 200) return response.readEntity(Integer.class);
             else if (response.getStatus() == 404) return null;
-            else throw new TicketServiceNotAvailable(response.readEntity(String.class));
+//            else throw new TicketServiceNotAvailable(response.readEntity(String.class));
+            else throw new TicketServiceNotAvailable("сервис не доступен");
         }
     }
 

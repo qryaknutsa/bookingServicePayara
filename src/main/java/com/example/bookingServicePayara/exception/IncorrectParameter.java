@@ -1,7 +1,10 @@
 package com.example.bookingServicePayara.exception;
 
+import jakarta.xml.ws.WebFault;
+
 import java.util.List;
 
+@WebFault(name = "IncorrectParameter")
 public class IncorrectParameter extends RuntimeException {
     List<String> messages;
 

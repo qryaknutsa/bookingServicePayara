@@ -1,35 +1,39 @@
 package com.example.bookingServicePayara.controller;
 
+import com.example.bookingServicePayara.dto.EventRead;
 import com.example.bookingServicePayara.dto.EventWrite;
+import com.example.bookingServicePayara.model.Event;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.core.Response;
+import jakarta.xml.soap.SOAPException;
+
+import java.util.List;
 
 
 @WebService
 public interface EventService {
 
     @WebMethod
-    Response getQwe();
+    String getQwe();
 
     @WebMethod
-    Response getAllEvents();
+    Object getAllEvents() throws SOAPException;
 
     @WebMethod
-    Response getEvent(@WebParam(name = "id") String id);
+    EventRead getEvent(@WebParam(name = "id") String id) throws SOAPException;
 
     @WebMethod
-    Response addEvent(@Valid @WebParam(name = "eventWrite") EventWrite dto);
+    Object addEvent(@Valid @WebParam(name = "eventWrite") EventWrite dto) throws SOAPException;
 
     @WebMethod
-    Response copyTicketWithDoublePriceAndVip(
+    Object copyTicketWithDoublePriceAndVip(
             @WebParam(name = "ticket_id") String ticketId,
             @WebParam(name = "person_id") String personId
-    );
+    ) throws SOAPException;
 
     @WebMethod
-    Response deleteEvent(@WebParam(name = "event_id") String event_id);
+    Object deleteEvent(@WebParam(name = "event_id") String event_id) throws SOAPException;
 
 }

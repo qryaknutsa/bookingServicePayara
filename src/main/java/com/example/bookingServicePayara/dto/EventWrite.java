@@ -5,51 +5,58 @@ import com.google.gson.annotations.SerializedName;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+//@XmlRootElement(name = "EventWrite")
 public class EventWrite implements Serializable {
     @CustomNotNull
     @Size(min = 1, message = "Значение должно быть от 1 до 2147483647 символов")
+//    @XmlTransient
     private String title;
 
+//    @XmlTransient
     private String description;
 
     @CustomNotNull
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
-    @SerializedName("startTime")
     @FutureOrPresent(message = "Время начала не может быть в прошлом")
+//    @XmlTransient
     private ZonedDateTime startTime;
 
     @CustomNotNull
-    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
-    @SerializedName("endTime")
     @FutureOrPresent(message = "Время окончания не может быть в прошлом")
+//    @XmlTransient
     private ZonedDateTime endTime;
 
     @CustomNotNull
     @Valid
+//    @XmlTransient
     private CoordinatesWrite coordinates;
 
     @CustomNotNull
     @DecimalMax(value = "2147483647", message = "Значение не может быть больше возможного 2147483647")
     @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 1")
+//    @XmlTransient
     private Integer price;
 
     @CustomNotNull
     @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0")
     @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
+//    @XmlTransient
     private Double discount;
 
     @CustomNotNull
     @Valid
+//    @XmlTransient
     private LocationWrite location;
 
     @CustomNotNull
     @Positive(message = "Значение должен быть больше нуля")
-//    @DecimalMax(value = "100", message = "Значение не может быть больше 100")
-    @SerializedName("ticketsNum")
+//    @XmlTransient
     private Integer ticketsNum;
 
     public @DecimalMax(value = "2147483647", message = "Значение не может быть больше возможного 2147483647") @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 1") Integer getPrice() {

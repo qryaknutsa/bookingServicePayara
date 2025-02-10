@@ -1,41 +1,49 @@
 package com.example.bookingServicePayara.dto;
 
-import com.example.bookingServicePayara.model.tools.ZonedDateTimeConverter;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Convert;
+import jakarta.xml.bind.annotation.*;
+
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
+@XmlRootElement(name = "EventRead")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso({CoordinatesWrite.class, LocationWrite.class})
 public class EventRead implements Serializable {
+    @XmlElement(name = "id")
     private int id;
+    @XmlElement
     private String title;
 
+    @XmlElement
     private String description;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    @JsonProperty("startTime")
-    @Convert(converter = ZonedDateTimeConverter.class)
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @XmlElement
     private ZonedDateTime startTime;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    @JsonProperty("endTime")
-    @Convert(converter = ZonedDateTimeConverter.class)
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @XmlElement
     private ZonedDateTime endTime;
 
+    @XmlElement
     private CoordinatesWrite coordinates;
 
-
+    @XmlElement
     private LocationWrite location;
 
+    @XmlElement
     private Integer price;
 
+    @XmlElement
     private Double discount;
 
-
-    @JsonProperty("ticketsNum")
+    @XmlElement
     private Integer ticketsNum;
+
+
+
+
 
     public EventRead(int id, String title, String description, ZonedDateTime startTime, ZonedDateTime endTime, CoordinatesWrite coordinates, Integer price, Double discount, Integer ticketsNum) {
         this.id = id;
