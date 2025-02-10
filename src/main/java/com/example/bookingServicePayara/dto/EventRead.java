@@ -1,6 +1,8 @@
 package com.example.bookingServicePayara.dto;
 
+import com.example.bookingServicePayara.mapper.ZonedDateTimeAdapter;
 import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 import java.io.Serializable;
@@ -8,7 +10,6 @@ import java.time.ZonedDateTime;
 
 @XmlRootElement(name = "EventRead")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({CoordinatesWrite.class, LocationWrite.class})
 public class EventRead implements Serializable {
     @XmlElement(name = "id")
     private int id;
@@ -18,11 +19,11 @@ public class EventRead implements Serializable {
     @XmlElement
     private String description;
 
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
     @XmlElement
     private ZonedDateTime startTime;
 
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
     @XmlElement
     private ZonedDateTime endTime;
 

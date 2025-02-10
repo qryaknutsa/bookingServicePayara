@@ -9,16 +9,17 @@ import java.io.Serializable;
 
 @XmlRootElement(name = "CoordinatesWrite")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "CoordinatesWrite", propOrder = {"x", "y"}) // Добавляем, чтобы определить порядок элементов
 public class CoordinatesWrite implements Serializable {
     @DecimalMin(value = "-1.79769313348623157E308", message = "Значение не может быть меньше возможного -1.79769313348623157E308.")
     @DecimalMax(value = "1.79769313348623157E308", message = "Значение не может быть больше возможного 1.79769313348623157E308.")
-    @XmlTransient
+    @XmlElement
     private float x = 0;
 
     @CustomNotNull
     @DecimalMin(value = "-1.79769313348623157E308", message = "Значение не может быть меньше возможного -1.79769313348623157E308.")
     @DecimalMax(value = "1.79769313348623157E308", message = "Значение не может быть больше возможного 1.79769313348623157E308.")
-    @XmlTransient
+    @XmlElement
     private Float y;
 
 

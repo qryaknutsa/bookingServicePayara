@@ -8,11 +8,13 @@ import com.example.bookingServicePayara.model.Person;
 import com.example.bookingServicePayara.model.Ticket;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 public class EventDao {
     @PersistenceContext(unitName = "myPersistenceUnit")
     private EntityManager em;

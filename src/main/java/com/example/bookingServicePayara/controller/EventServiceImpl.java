@@ -7,11 +7,12 @@ import com.example.bookingServicePayara.dto.EventWrite;
 import com.example.bookingServicePayara.exception.*;
 import com.example.bookingServicePayara.model.Event;
 import com.example.bookingServicePayara.model.Ticket;
+import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
 import jakarta.jws.WebService;
 import jakarta.validation.Valid;
 
-
+@Stateless
 @WebService(endpointInterface = "com.example.bookingServicePayara.controller.EventService")
 public class EventServiceImpl implements EventService {
     @Inject

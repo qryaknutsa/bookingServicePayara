@@ -1,62 +1,65 @@
 package com.example.bookingServicePayara.dto;
 
+import com.example.bookingServicePayara.mapper.ZonedDateTimeAdapter;
 import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
 import com.google.gson.annotations.SerializedName;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-//@XmlRootElement(name = "EventWrite")
+@XmlRootElement(name = "EventWrite")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class EventWrite implements Serializable {
     @CustomNotNull
     @Size(min = 1, message = "Значение должно быть от 1 до 2147483647 символов")
-//    @XmlTransient
+    @XmlElement
     private String title;
 
-//    @XmlTransient
+    @XmlElement
     private String description;
 
     @CustomNotNull
     @FutureOrPresent(message = "Время начала не может быть в прошлом")
-//    @XmlTransient
+    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
+    @XmlElement
     private ZonedDateTime startTime;
 
     @CustomNotNull
     @FutureOrPresent(message = "Время окончания не может быть в прошлом")
-//    @XmlTransient
+    @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
+    @XmlElement
     private ZonedDateTime endTime;
 
     @CustomNotNull
     @Valid
-//    @XmlTransient
+    @XmlElement
     private CoordinatesWrite coordinates;
 
     @CustomNotNull
     @DecimalMax(value = "2147483647", message = "Значение не может быть больше возможного 2147483647")
     @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 1")
-//    @XmlTransient
+    @XmlElement
     private Integer price;
 
     @CustomNotNull
     @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0")
     @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
-//    @XmlTransient
+    @XmlElement
     private Double discount;
 
     @CustomNotNull
     @Valid
-//    @XmlTransient
+    @XmlElement
     private LocationWrite location;
 
     @CustomNotNull
     @Positive(message = "Значение должен быть больше нуля")
-//    @XmlTransient
+    @XmlElement
     private Integer ticketsNum;
 
     public @DecimalMax(value = "2147483647", message = "Значение не может быть больше возможного 2147483647") @DecimalMin(value = "1", message = "Значение не может быть меньше возможного 1") Integer getPrice() {
