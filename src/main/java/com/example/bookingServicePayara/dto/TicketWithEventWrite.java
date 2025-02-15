@@ -3,37 +3,51 @@ package com.example.bookingServicePayara.dto;
 import com.example.bookingServicePayara.validation.annotation.CustomNotNull;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 
+@XmlRootElement(name = "ticket")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class TicketWithEventWrite implements Serializable {
     @CustomNotNull
     @Size(min = 1, message = "Значение не должно быть пустым.")
+    @XmlElement
     private String name;
 
     @CustomNotNull
     @Valid
+    @XmlElement
     private CoordinatesWrite coordinates;
 
 
     @CustomNotNull
     @Positive(message = "Значение должен быть больше нуля")
     @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647")
+    @XmlElement
     private Integer price;
 
     @CustomNotNull
     @DecimalMin(value = "0", message = "Значение не может быть меньше возможного 0")
     @DecimalMax(value = "100", message = "Значение не может быть больше возможного 100")
+    @XmlElement
     private Double discount;
 
+    @XmlElement
     private Boolean refundable;
 
+    @XmlElement
     private String type;
 
     @Valid
+    @XmlElement
     private PersonWrite person;
 
     @Min(value = 0, message = "Значение должно быть больше 0")
+    @XmlElement
     private Integer eventId;
 
 

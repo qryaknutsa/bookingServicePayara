@@ -15,14 +15,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringReader;
 
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TicketService {
-//    private final static String SPRING_SERVICE_URL = "https://localhost:9011/ticketservicepayara/TMA/api/v2/tickets";
+    //    private final static String SPRING_SERVICE_URL = "https://localhost:9011/ticketservicepayara/TMA/api/v2/tickets";
     private final static String SPRING_SERVICE_URL = "http://localhost:8081/ticketservicepayara/TMA/api/v2/tickets";
 
     public static Object saveTicket(TicketWrite ticket) {
@@ -41,10 +50,10 @@ public class TicketService {
 
         try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(SPRING_SERVICE_URL + "/bulk/" + num)
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(ticket, MediaType.APPLICATION_JSON));
+                    .request(MediaType.APPLICATION_XML)
+                    .post(Entity.entity(ticket, MediaType.APPLICATION_XML));
 
-            if (response.getStatus() == 201) ids = (List<Integer>) response.readEntity(Object.class);
+            if (response.getStatus() == 200) ids = (List<Integer>) response.readEntity(Object.class);
             else throw new TicketServiceNotAvailable(response.readEntity(String.class));
         }
         return ids;
