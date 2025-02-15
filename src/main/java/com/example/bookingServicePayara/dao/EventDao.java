@@ -86,14 +86,14 @@ public class EventDao {
 
         Event event = em.find(Event.class, event_id);
         if (event != null) {
-            if (event.getStartTime().isBefore(ZonedDateTime.now()))
-                throw new TooLateToDelete("Мероприятие уже началось, отменить невозможно.");
-            else if (ZonedDateTime.now().isAfter(event.getEndTime()))
-                throw new TooLateToDelete("Мероприятие уже прошло, отменить невозможно.");
-            else {
+//            if (event.getStartTime().isBefore(ZonedDateTime.now()) && event.getEndTime().isAfter(ZonedDateTime.now()))
+//                throw new TooLateToDelete("Мероприятие уже началось, отменить невозможно.");
+//            else if (ZonedDateTime.now().isAfter(event.getEndTime()))
+//                throw new TooLateToDelete("Мероприятие уже прошло, отменить невозможно.");
+//            else {
                 TicketService.deleteTickets(event_id);
                 em.remove(event);
-            }
+//            }
         } else
             throw new CustomNotFound("По вашему запросу мероприятие не найдено.");
     }
