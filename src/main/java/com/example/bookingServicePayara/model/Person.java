@@ -6,40 +6,52 @@ import com.example.bookingServicePayara.enums.EyeColor;
 import com.example.bookingServicePayara.enums.HairColor;
 import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 
 @Entity
 @Table(name = "person")
+@XmlRootElement(name = "person")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Person implements Serializable {
     @Id
     @Column(nullable = false, unique = true)
     @SerializedName("id")
+    @XmlElement
     private int id;
 
     @Column(nullable = false)
     @SerializedName("height")
+    @XmlElement
     private int height;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "eyeColor")
     @SerializedName("eyeColor")
+    @XmlElement
     private EyeColor eyeColor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "hairColor", nullable = false)
     @SerializedName("hairColor")
+    @XmlElement
     private HairColor hairColor;
 
 
     @Enumerated(EnumType.STRING)
     @Column
     @SerializedName("nationality")
+    @XmlElement
     private Country nationality;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "location", nullable = false)
     @SerializedName("location")
+    @XmlElement
     private Location location;
 
     public Person() {

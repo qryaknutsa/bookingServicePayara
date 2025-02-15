@@ -37,10 +37,10 @@ public class TicketService {
     public static Object saveTicket(TicketWrite ticket) {
         try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(SPRING_SERVICE_URL)
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(ticket, MediaType.APPLICATION_JSON));
+                    .request(MediaType.APPLICATION_XML)
+                    .post(Entity.entity(ticket, MediaType.APPLICATION_XML));
 
-            if (response.getStatus() == 201) return response.readEntity(Ticket.class);
+            if (response.getStatus() == 200) return response.readEntity(Ticket.class);
             else throw new TicketServiceNotAvailable(response.readEntity(String.class));
         }
     }
@@ -100,7 +100,7 @@ public class TicketService {
         String s = SPRING_SERVICE_URL + "/" + id;
         try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(s)
-                    .request(MediaType.APPLICATION_JSON)
+                    .request(MediaType.APPLICATION_XML)
                     .get();
             if (response.getStatus() == 200) return response.readEntity(TicketWithEventWrite.class);
             else if (response.getStatus() == 404) return null;
@@ -112,7 +112,7 @@ public class TicketService {
         String s = SPRING_SERVICE_URL + "/people/" + id;
         try (Client client = ClientBuilder.newClient()) {
             Response response = client.target(s)
-                    .request(MediaType.APPLICATION_JSON)
+                    .request(MediaType.APPLICATION_XML)
                     .get();
             if (response.getStatus() == 200) return response.readEntity(Person.class);
             else if (response.getStatus() == 404) return null;

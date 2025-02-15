@@ -39,7 +39,7 @@ public class TicketWithEventWrite implements Serializable {
     @XmlElement
     private Boolean refundable;
 
-    @XmlElement
+    @XmlElement(name="ticketType")
     private String type;
 
     @Valid

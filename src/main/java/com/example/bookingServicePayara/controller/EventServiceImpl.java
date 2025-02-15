@@ -1,14 +1,18 @@
 package com.example.bookingServicePayara.controller;
 
 import com.example.bookingServicePayara.dao.EventDao;
+import com.example.bookingServicePayara.dao.TicketService;
 import com.example.bookingServicePayara.dto.EventReadList;
 import com.example.bookingServicePayara.dto.EventRead;
 import com.example.bookingServicePayara.dto.EventWrite;
+import com.example.bookingServicePayara.dto.TicketWithEventWrite;
 import com.example.bookingServicePayara.exception.*;
 import com.example.bookingServicePayara.model.Event;
+import com.example.bookingServicePayara.model.Person;
 import com.example.bookingServicePayara.model.Ticket;
 import jakarta.ejb.Stateless;
 import jakarta.inject.Inject;
+import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.validation.Valid;
 
@@ -47,6 +51,16 @@ public class EventServiceImpl implements EventService {
     @Override
     public void deleteEvent(String event_id) throws InvalidParameter, TooLateToDelete, CustomNotFound {
         eventDao.delete(event_id);
+    }
+
+    @Override
+    public Person getPerson(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound {
+        return TicketService.findPerson(Integer.parseInt(id));
+    }
+
+    @Override
+    public TicketWithEventWrite getTicket(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound {
+        return TicketService.findTicket(Integer.parseInt(id));
     }
 
 }

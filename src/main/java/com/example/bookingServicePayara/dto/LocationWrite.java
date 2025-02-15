@@ -6,9 +6,9 @@ import jakarta.xml.bind.annotation.*;
 
 import java.io.Serializable;
 
-@XmlRootElement(name = "LocationWrite")
+@XmlRootElement(name = "locationWrite")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "LocationWrite", propOrder = {"x", "y", "z", "name"})
+@XmlType(name = "locationWrite", propOrder = {"x", "y", "z", "name"})
 public class LocationWrite implements Serializable {
     @CustomNotNull
     @Min(value = -2147483648, message = "Значение не может быть меньше возможного -2147483648")
@@ -30,11 +30,6 @@ public class LocationWrite implements Serializable {
     @Size(message = "Значение должно быть до 2147483647 символов")
     @XmlElement
     private String name;
-
-
-
-
-
 
 
     public @Min(value = -2147483648, message = "Значение не может быть меньше возможного -2147483648") @Max(value = 2147483647, message = "Значение не может быть больше возможного 2147483647") Integer getX() {

@@ -2,6 +2,10 @@ package com.example.bookingServicePayara.model;
 
 import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 
@@ -9,27 +13,34 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "location")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Location implements Serializable {
     @Id
     @Column(nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SerializedName("id")
+    @XmlElement
     private int id;
 
     @Column(nullable = false)
     @SerializedName("x")
+    @XmlElement
     private Integer x;
 
     @Column
     @SerializedName("y")
+    @XmlElement
     private long y;
 
     @Column(nullable = false)
     @SerializedName("z")
+    @XmlElement
     private Double z;
 
     @Column(columnDefinition="TEXT")
     @SerializedName("name")
+    @XmlElement
     private String name;
 
     public Location() {

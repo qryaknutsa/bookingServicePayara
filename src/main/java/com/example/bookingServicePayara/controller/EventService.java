@@ -3,8 +3,10 @@ package com.example.bookingServicePayara.controller;
 import com.example.bookingServicePayara.dto.EventReadList;
 import com.example.bookingServicePayara.dto.EventRead;
 import com.example.bookingServicePayara.dto.EventWrite;
+import com.example.bookingServicePayara.dto.TicketWithEventWrite;
 import com.example.bookingServicePayara.exception.*;
 import com.example.bookingServicePayara.model.Event;
+import com.example.bookingServicePayara.model.Person;
 import com.example.bookingServicePayara.model.Ticket;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
@@ -35,5 +37,11 @@ public interface EventService {
 
     @WebMethod
     void deleteEvent(@WebParam(name = "event_id") String event_id) throws InvalidParameter, TooLateToDelete, CustomNotFound;
+
+    @WebMethod
+    Person getPerson(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound;
+
+    @WebMethod
+    TicketWithEventWrite getTicket(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound;
 
 }

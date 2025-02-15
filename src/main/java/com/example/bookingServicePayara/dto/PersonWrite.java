@@ -5,31 +5,43 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
 import java.io.Serializable;
 
+@XmlRootElement(name = "person")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PersonWrite implements Serializable {
 
+    @XmlElement
     private Integer id;
 
     @CustomNotNull
     @Min(value = 50, message = "Значение должно быть больше 50")
     @Max(value = 300, message = "Значение должно быть меньше 300")
+    @XmlElement
     private Integer height;
 
     @Pattern(regexp = "(?i)^(GREEN|RED|BLUE)$", message = "Некорректный выбор цвета глаз'")
+    @XmlElement
     private String eyeColor;
 
     @CustomNotNull
     @Pattern(regexp = "(?i)^(BLACK|RED|BLUE|ORANGE|WHITE)$", message = "Некорректный выбор цвета волос'")
+    @XmlElement
     private String hairColor;
 
     @Pattern(regexp = "(?i)^(china|japan|north_korea)$", message = "Некорректный выбор национальности'")
+    @XmlElement
     private String nationality;
 
     @CustomNotNull
     @Valid
+    @XmlElement
     private LocationWrite location;
 
 

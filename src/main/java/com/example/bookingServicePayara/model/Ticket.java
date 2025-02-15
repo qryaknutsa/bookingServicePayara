@@ -7,6 +7,10 @@ import com.google.gson.annotations.SerializedName;
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 
 import java.io.Serializable;
@@ -15,52 +19,64 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "ticket")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Ticket implements Serializable {
     @Id
     @Column(nullable = false, unique = true)
     @SerializedName("id")
+    @XmlElement
     private Long id;
 
     @Column(nullable = false, columnDefinition="TEXT")
     @SerializedName("name")
+    @XmlElement
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "coordinates", nullable = false)
     @SerializedName("coordinates")
+    @XmlElement
     private Coordinates coordinates;
 
 
     @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
     @SerializedName("creationDate")
     @Convert(converter = ZonedDateTimeConverter.class)
+    @XmlElement
     private ZonedDateTime creationDate;
 
 
     @Column(nullable = false)
     @SerializedName("price")
+    @XmlElement
     private int price;
 
     @Column(nullable = false)
     @SerializedName("discount")
+    @XmlElement
     private double discount;
 
     @Column
     @SerializedName("refundable")
+    @XmlElement
     private boolean refundable = false;
 
     @Enumerated(EnumType.STRING)
     @Column
     @SerializedName("type")
     @JsonbTypeAdapter(TicketTypeAdapter.class)
+    @XmlElement(name = "ticketType")
     private TicketType type;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "person")
     @SerializedName("person")
+    @XmlElement
     private Person person;
 
     @Column(name = "eventId")
+    @XmlElement
     private int eventId = 0;
 
 
