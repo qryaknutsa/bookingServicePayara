@@ -15,6 +15,10 @@ import jakarta.inject.Inject;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import jakarta.ws.rs.NotFoundException;
+
+import java.security.InvalidParameterException;
 
 @Stateless
 @WebService(endpointInterface = "com.example.bookingServicePayara.controller.EventService")
@@ -29,37 +33,37 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventReadList getAllEvents() throws CustomNotFound{
+    public EventReadList getAllEvents() throws NotFoundException {
         return eventDao.getAll();
     }
 
     @Override
-    public EventRead getEvent(String id) throws CustomNotFound, InvalidParameter {
+    public EventRead getEvent(String id) throws NotFoundException, InvalidParameterException {
         return eventDao.getById(id);
     }
 
     @Override
-    public Event addEvent(@Valid EventWrite dto) throws TicketServiceNotAvailable {
+    public Event addEvent(@Valid EventWrite dto) throws TicketServiceNotAvailable, ValidationException {
         return eventDao.save(dto);
     }
 
     @Override
-    public Ticket copyTicketWithDoublePriceAndVip(String ticket_id, String person_id) throws IncorrectParameter, InvalidParameter, MultipleNotFound, AlreadyVIPException,  TicketServiceNotAvailable {
+    public Ticket copyTicketWithDoublePriceAndVip(String ticket_id, String person_id) throws InvalidParameterException, NotFoundException, AlreadyVIPException,  TicketServiceNotAvailable {
         return eventDao.copyTicketWithDoublePriceAndVip(ticket_id, person_id);
     }
 
     @Override
-    public void deleteEvent(String event_id) throws InvalidParameter, TooLateToDelete, CustomNotFound {
+    public void deleteEvent(String event_id) throws InvalidParameterException, TooLateToDelete, NotFoundException {
         eventDao.delete(event_id);
     }
 
     @Override
-    public Person getPerson(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound {
+    public Person getPerson(@WebParam(name = "id") String id) throws InvalidParameterException, NotFoundException {
         return TicketService.findPerson(Integer.parseInt(id));
     }
 
     @Override
-    public TicketWithEventWrite getTicket(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound {
+    public TicketWithEventWrite getTicket(@WebParam(name = "id") String id) throws InvalidParameterException, NotFoundException {
         return TicketService.findTicket(Integer.parseInt(id));
     }
 

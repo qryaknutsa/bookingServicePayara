@@ -12,6 +12,10 @@ import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import jakarta.ws.rs.NotFoundException;
+
+import java.security.InvalidParameterException;
 
 
 @WebService
@@ -21,27 +25,27 @@ public interface EventService {
     String getQwe();
 
     @WebMethod
-    EventReadList getAllEvents() throws CustomNotFound;
+    EventReadList getAllEvents() throws NotFoundException;
 
     @WebMethod
-    EventRead getEvent(@WebParam(name = "id") String id) throws CustomNotFound, InvalidParameter;
+    EventRead getEvent(@WebParam(name = "id") String id) throws NotFoundException, InvalidParameterException;
 
     @WebMethod
-    Event addEvent(@Valid @WebParam(name = "eventWrite") EventWrite dto) throws TicketServiceNotAvailable;
+    Event addEvent(@Valid @WebParam(name = "eventWrite") EventWrite dto) throws TicketServiceNotAvailable, ValidationException;
 
     @WebMethod
     Ticket copyTicketWithDoublePriceAndVip(
             @WebParam(name = "ticket_id") String ticketId,
             @WebParam(name = "person_id") String personId
-    ) throws IncorrectParameter, InvalidParameter, MultipleNotFound, AlreadyVIPException,  TicketServiceNotAvailable;
+    ) throws InvalidParameterException, NotFoundException, AlreadyVIPException,  TicketServiceNotAvailable;
 
     @WebMethod
-    void deleteEvent(@WebParam(name = "event_id") String event_id) throws InvalidParameter, TooLateToDelete, CustomNotFound;
+    void deleteEvent(@WebParam(name = "event_id") String event_id) throws InvalidParameterException, TooLateToDelete, NotFoundException;
 
     @WebMethod
-    Person getPerson(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound;
+    Person getPerson(@WebParam(name = "id") String id) throws InvalidParameterException, NotFoundException;
 
     @WebMethod
-    TicketWithEventWrite getTicket(@WebParam(name = "id") String id) throws InvalidParameter, CustomNotFound;
+    TicketWithEventWrite getTicket(@WebParam(name = "id") String id) throws InvalidParameterException, NotFoundException;
 
 }

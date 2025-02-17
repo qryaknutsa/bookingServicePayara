@@ -1,4 +1,4 @@
-package com.example.bookingServicePayara.cors;
+package com.example.bookingServicePayara.filter;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;

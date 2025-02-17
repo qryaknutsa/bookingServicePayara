@@ -7,7 +7,7 @@
   <display-name>JAX-RS Hibernate Example</display-name>
   <filter>
     <filter-name>CORSFilter</filter-name>
-    <filter-class>com.example.bookingServicePayara.cors.CORSFilter</filter-class>
+    <filter-class>com.example.bookingServicePayara.filter.CORSFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>CORSFilter</filter-name>
